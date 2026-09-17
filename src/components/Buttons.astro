@@ -1,7 +1,7 @@
 ---
 interface Props { links: Record<string, string | undefined> }
 const labels: Record<string, string> = {
-  poster: 'Poster', paper: 'Paper', code: 'Code', videos: 'Videos', slides: 'Slides', lab: 'Lab',
+  poster: 'Poster', paper: 'Paper', code: 'Code', videos: 'Videos', slides: 'Slides', lab: 'Lab', minilabs: 'Mini-labs', exercises: 'Exercises 2026/27',
 };
 const entries = Object.entries(Astro.props.links).filter(([, href]) => href);
 ---

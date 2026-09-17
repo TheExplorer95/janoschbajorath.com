@@ -10,6 +10,8 @@ const links = z
     videos: z.string().optional(),
     slides: z.string().optional(),
     lab: z.string().optional(),
+    minilabs: z.string().optional(),
+    exercises: z.string().optional(),
   })
   .default({});
 
