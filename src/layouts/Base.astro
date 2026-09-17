@@ -1,0 +1,51 @@
+---
+import '../styles/global.css';
+import { site } from '../data/site';
+
+interface Props {
+  title?: string;
+  description?: string;
+  wide?: boolean;
+}
+const { title, description = site.tagline, wide = false } = Astro.props;
+const fullTitle = title ? `${title} · ${site.name}` : site.name;
+const path = Astro.url.pathname.replace(/\/$/, '') || '/';
+const current = (href: string) => (href === '/' ? path === '/' : path.startsWith(href));
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <link rel="canonical" href={new URL(Astro.url.pathname, Astro.site)} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="wrap wide">
+        <a class="brand" href="/">{site.name}</a>
+        <nav>
+          {site.nav.map((n) => <a href={n.href} aria-current={current(n.href) ? 'page' : undefined}>{n.label}</a>)}
+        </nav>
+      </div>
+    </header>
+    <main>
+      <div class:list={['wrap', { wide }]}>
+        <slot />
+      </div>
+    </main>
+    <footer class="site-footer">
+      <div class="wrap wide">
+        <div class="links">
+          <a href={`mailto:${site.email}`}>{site.email}</a>
+          {site.links.map((l) => <a href={l.href}>{l.label}</a>)}
+        </div>
+        <div>© {new Date().getFullYear()} {site.name}</div>
+      </div>
+    </footer>
+  </body>
+</html>

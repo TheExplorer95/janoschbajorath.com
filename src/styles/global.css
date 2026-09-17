@@ -1,0 +1,95 @@
+@import '@fontsource/fira-sans/400.css';
+@import '@fontsource/fira-sans/400-italic.css';
+@import '@fontsource/fira-sans/600.css';
+@import 'katex/dist/katex.min.css';
+
+:root {
+  --ink: #222;
+  --muted: #6b706b;
+  --rule: #c8ccc8;
+  --bg: #fbfbfa;
+  --bg-soft: #f2f4f2;
+  --accent: #1f9423;
+  --accent-ink: #176e1a;
+  --measure: 44rem;
+  --measure-wide: 60rem;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --ink: #e6e8e6;
+    --muted: #9aa09a;
+    --rule: #3a3f3a;
+    --bg: #141614;
+    --bg-soft: #1d201d;
+    --accent: #4fc253;
+    --accent-ink: #7fd882;
+  }
+}
+
+* { box-sizing: border-box; }
+html { color-scheme: light dark; }
+body {
+  margin: 0;
+  font-family: 'Fira Sans', system-ui, sans-serif;
+  font-size: 1.05rem;
+  line-height: 1.6;
+  color: var(--ink);
+  background: var(--bg);
+}
+a { color: var(--accent-ink); text-decoration: none; }
+a:hover { text-decoration: underline; }
+h1, h2, h3 { line-height: 1.2; font-weight: 600; }
+h1 { font-size: 2rem; margin: 0 0 0.5rem; }
+h2 { font-size: 1.4rem; margin: 2.5rem 0 0.75rem; }
+h3 { font-size: 1.1rem; margin: 1.75rem 0 0.5rem; }
+p, ul, ol { margin: 0 0 1rem; }
+img, video, iframe { max-width: 100%; height: auto; }
+figure { margin: 1.5rem 0; }
+figcaption { font-size: 0.9rem; color: var(--muted); margin-top: 0.4rem; }
+hr { border: 0; border-top: 1px solid var(--rule); margin: 2.5rem 0; }
+code { font-size: 0.92em; background: var(--bg-soft); padding: 0.1em 0.3em; border-radius: 3px; }
+pre { background: var(--bg-soft); padding: 1rem; overflow-x: auto; border-radius: 4px; }
+pre code { background: none; padding: 0; }
+table { border-collapse: collapse; width: 100%; margin: 0 0 1rem; display: block; overflow-x: auto; }
+th, td { text-align: left; padding: 0.4rem 0.6rem; border-bottom: 1px solid var(--rule); vertical-align: top; }
+
+.wrap { max-width: var(--measure); margin: 0 auto; padding: 0 1.25rem; }
+.wrap.wide { max-width: var(--measure-wide); }
+
+.site-header { border-bottom: 1px solid var(--rule); }
+.site-header .wrap { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; padding-top: 1rem; padding-bottom: 1rem; flex-wrap: wrap; }
+.site-header .brand { font-weight: 600; color: var(--ink); }
+.site-header nav { display: flex; gap: 1.25rem; }
+.site-header nav a { color: var(--ink); }
+.site-header nav a[aria-current="page"] { color: var(--accent-ink); }
+
+main { padding: 2.5rem 0 4rem; }
+
+.site-footer { border-top: 1px solid var(--rule); padding: 1.5rem 0 2.5rem; font-size: 0.9rem; color: var(--muted); }
+.site-footer .links { display: flex; flex-wrap: wrap; gap: 0.5rem 1.25rem; margin-bottom: 0.5rem; }
+
+.muted { color: var(--muted); }
+.lede { font-size: 1.2rem; }
+.eyebrow { font-size: 0.85rem; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); margin: 0 0 0.5rem; }
+
+.button-row { display: flex; flex-wrap: wrap; gap: 0.6rem; margin: 1.5rem 0 2rem; }
+.button-row a {
+  display: inline-block; padding: 0.4rem 0.9rem; border: 1px solid var(--accent);
+  border-radius: 999px; color: var(--accent-ink); font-weight: 600; font-size: 0.95rem;
+}
+.button-row a:hover { background: var(--accent); color: #fff; text-decoration: none; }
+
+.entry-list { list-style: none; padding: 0; margin: 0; }
+.entry-list li { padding: 1.1rem 0; border-top: 1px solid var(--rule); }
+.entry-list li:last-child { border-bottom: 1px solid var(--rule); }
+.entry-list .meta { font-size: 0.9rem; color: var(--muted); }
+.entry-list a.title { font-weight: 600; font-size: 1.1rem; color: var(--ink); }
+
+.notice { background: var(--bg-soft); border-left: 3px solid var(--accent); padding: 0.75rem 1rem; margin: 0 0 1.5rem; font-size: 0.95rem; }
+
+.video { position: relative; aspect-ratio: 16 / 9; margin: 1.5rem 0; }
+.video iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+
+.hero { display: flex; gap: 2rem; align-items: flex-start; flex-wrap: wrap; }
+.hero .portrait { width: 160px; height: 160px; border-radius: 50%; object-fit: cover; background: var(--bg-soft); flex: none; }
+.hero .text { flex: 1 1 20rem; }

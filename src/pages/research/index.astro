@@ -1,0 +1,20 @@
+---
+import Base from '../../layouts/Base.astro';
+import EntryList from '../../components/EntryList.astro';
+import { getCollection } from 'astro:content';
+import { Content as Statement } from '../../prose/statement.md';
+
+const all = (await getCollection('research')).sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+const projects = all.filter((e) => e.data.kind === 'project');
+const publications = all.filter((e) => e.data.kind !== 'project');
+---
+<Base title="Research">
+  <h1>Research</h1>
+  <Statement />
+
+  <h2 id="projects">Projects</h2>
+  {projects.length ? <EntryList base="/research" entries={projects} /> : <p class="muted">Project pages are being written.</p>}
+
+  <h2 id="publications">Posters, papers, talks</h2>
+  <EntryList base="/research" entries={publications} />
+</Base>

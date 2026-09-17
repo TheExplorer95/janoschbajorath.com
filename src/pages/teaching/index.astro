@@ -1,0 +1,14 @@
+---
+import Base from '../../layouts/Base.astro';
+import EntryList from '../../components/EntryList.astro';
+import { getCollection } from 'astro:content';
+import { Content as Intro } from '../../prose/teaching.md';
+
+const entries = (await getCollection('teaching')).sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+---
+<Base title="Teaching">
+  <h1>Teaching</h1>
+  <Intro />
+  <h2>Tutorials</h2>
+  <EntryList base="/teaching" entries={entries} />
+</Base>

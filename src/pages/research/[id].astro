@@ -1,0 +1,23 @@
+---
+import Base from '../../layouts/Base.astro';
+import Buttons from '../../components/Buttons.astro';
+import YouTube from '../../components/YouTube.astro';
+import { getCollection, render } from 'astro:content';
+
+export async function getStaticPaths() {
+  const entries = await getCollection('research');
+  return entries.map((entry) => ({ params: { id: entry.id }, props: { entry } }));
+}
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+const d = entry.data;
+---
+<Base title={d.title} description={d.summary} wide>
+  <p class="eyebrow">{[d.kind, d.venue].filter(Boolean).join(' · ')}</p>
+  <h1>{d.title}</h1>
+  {d.subtitle && <p class="lede">{d.subtitle}</p>}
+  <p class="muted">{d.authors.join(' · ')}</p>
+  <Buttons links={d.links} />
+  {d.status && <p class="notice">{d.status}</p>}
+  <Content components={{ YouTube }} />
+</Base>

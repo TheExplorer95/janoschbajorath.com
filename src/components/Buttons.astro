@@ -1,0 +1,12 @@
+---
+interface Props { links: Record<string, string | undefined> }
+const labels: Record<string, string> = {
+  poster: 'Poster', paper: 'Paper', code: 'Code', videos: 'Videos', slides: 'Slides', lab: 'Lab',
+};
+const entries = Object.entries(Astro.props.links).filter(([, href]) => href);
+---
+{entries.length > 0 && (
+  <div class="button-row">
+    {entries.map(([key, href]) => <a href={href}>{labels[key] ?? key}</a>)}
+  </div>
+)}

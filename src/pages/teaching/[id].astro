@@ -1,0 +1,21 @@
+---
+import Base from '../../layouts/Base.astro';
+import Buttons from '../../components/Buttons.astro';
+import YouTube from '../../components/YouTube.astro';
+import { getCollection, render } from 'astro:content';
+
+export async function getStaticPaths() {
+  const entries = await getCollection('teaching');
+  return entries.map((entry) => ({ params: { id: entry.id }, props: { entry } }));
+}
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+const d = entry.data;
+---
+<Base title={d.title} description={d.summary} wide>
+  <p class="eyebrow">{d.format}</p>
+  <h1>{d.title}</h1>
+  <p class="lede">{d.summary}</p>
+  <Buttons links={d.links} />
+  <Content components={{ YouTube }} />
+</Base>

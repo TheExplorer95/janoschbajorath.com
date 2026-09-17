@@ -1,0 +1,42 @@
+---
+title: "Proprioceptive quadruped locomotion without gait priors, stage one: a learnable representation shaped by an auxiliary dynamics objective structures the locomotion manifold"
+subtitle: "Three stages towards velocity-adaptive locomotion under interoceptive rewards: learnable feature extraction, learnable discovery of motion primitives and the emergence of behaviour."
+summary: "Poster at WHERE 2026 — Walk the Future, International Euregio Summer School on Legged Robots, Trento."
+authors: ["Janosch Bajorath", "Malte Schilling"]
+kind: poster
+venue: "WHERE 2026, Trento"
+date: 2026-09-21
+status: "This page accompanies the poster and is being extended during and after the summer school (21–27 September 2026). Sections marked as such are still to come."
+links:
+  lab: "https://www.uni-muenster.de/"
+---
+
+## The road
+
+*Build it → understand it → take it apart → let it emerge.* Today sits between the first two stations: a controller built from known ingredients that walks, trots and bounds, whose latent can be read.
+
+## Architecture and the three gradient sources
+
+*Diagram and description to come.* An encoder over the proprioceptive input window produces the latent $z_t$; the base policy turns $z_t$, the command and PD gains into actions. Three gradient sources shape the encoder: reinforcement learning alone, plus a dynamics-reconstruction objective, plus a contact head.
+
+## Adaptivity: where the controller stands
+
+At this stage, the environment schedules the kind of gait and its timing. The controller realises each pattern and crosses the switches. The wider ladder, from prescribed to self-owned gaits:
+
+1. **Randomised** — the gait is a command: kind, frequency and duty are drawn at random; the controller learns to execute all of them, with no notion of which gait fits which demand.
+2. **Scheduled — today** — the environment prescribes gait kind and timing; the controller realises each pattern and crosses the switches.
+3. **Training-only specification** — the deployed controller receives no gait signal; the specification reaches the encoder only through decoder targets and the reward during training.
+4. **Self-specified** — shaping rewards remain, but the specification they score against comes from the controller itself, not the environment.
+5. **Self-owned** — the controller prescribes the gait from its dynamics and the command, and uncovers the gaits itself; no gait reward.
+
+## What the latent carries
+
+*Latent map with per-gait cycles and the switching segment — figures and animations to come.*
+
+## How these were run
+
+*To come:* the matched setup behind every figure — same task, rewards, commands and schedule; a shared graph; what varied was the gradient source.
+
+## Outlook
+
+Next to remove: the environment clock, then the shaping reward. The policy owns its phase and frequency; gaits emerge from the embodiment; transitions from velocity alone.
