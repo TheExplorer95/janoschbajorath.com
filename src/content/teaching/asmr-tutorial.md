@@ -6,8 +6,6 @@ date: 2026-04-01
 links:
   code: "https://zivgitlab.uni-muenster.de/ai-systems/teaching/public/26-ss/asmr/tutorial"
 ---
-links:
-  code: "https://zivgitlab.uni-muenster.de/ai-systems/teaching/public/26-ss/asmr/tutorial"
 
 The tutorial applies the lecture's concepts in hands-on exercises, following the *Perceive – Reason – Act* loop. Students build a single robot platform from a bare model into a sensing, reasoning, acting system, on two parallel tracks:
 
