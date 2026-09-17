@@ -1,7 +1,9 @@
-*Draft statement — to be replaced with the finished text.*
+Contemporary quadruped locomotion controllers trained with reinforcement learning rely, almost universally, on externally introduced locomotion priors — architectural ones such as central pattern generators, or reward functions that explicitly encode desired gait properties. My work removes these priors from both the policy architecture and the reward, and instead makes the training process itself responsive to the latent space that forms inside a modular encoder–controller architecture. The central hypothesis: the structured, periodic nature of stable quadruped locomotion can emerge as a consequence of optimisation, not as a precondition of it.
 
-I work on quadruped locomotion learned with reinforcement learning, without gait priors: no central pattern generators, no motion imitation, no reward terms that prescribe how the legs should move. The controller is an encoder–controller pair that shares a learned latent representation of the robot's dynamics. My research asks three connected questions:
+Three connected goals:
 
-1. **Learning** — how can training produce structured, generalisable latent representations of the robot's dynamics and its environment?
-2. **Understanding** — how do these representations shape adaptive behaviour: gait, stability, transitions?
-3. **Applying** — how can what we read from the latent space feed back into training — curricula, exploration, architecture?
+1. **Learning** — learn structured, generalisable latent representations of the robot's dynamics and its environment.
+2. **Understanding** — understand how these representations modulate adaptive behaviour: gait, stability, transitions.
+3. **Applying** — use what the latent space reveals to improve training — curricula, exploration, control architectures.
+
+Platform: PPO, NVIDIA Isaac Sim / Isaac Lab, Unitree Go1/Go2.

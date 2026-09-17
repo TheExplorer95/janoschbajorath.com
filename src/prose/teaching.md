@@ -1,1 +1,1 @@
-Tutorials I have given at the University of Münster. Each page gives an overview and a few examples; the full material lives on GitHub.
+Courses and tutorials I have taught at the University of Münster, as teaching assistant in the Autonomous Intelligent Systems group. Each page gives an overview of the material; the full content lives in the linked repositories.

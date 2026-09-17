@@ -1,5 +1,7 @@
-*This page is being written — check back after WHERE 2026.*
+I am a PhD researcher in the [Autonomous Intelligent Systems](https://www.uni-muenster.de/AISystems/) group at the University of Münster, supervised by Malte Schilling. Since May 2024 I have been working on reinforcement-learning-based locomotion controllers for quadrupeds (Unitree Go1/Go2): how a controller can learn to walk, trot and bound from raw proprioception, and what the representations it learns along the way can tell us about the robot, its motion, and the training process itself.
 
-I am a PhD researcher in the Autonomous Intelligent Systems group at the University of Münster, supervised by Malte Schilling. My work asks how legged robots can learn adaptive locomotion from raw proprioception, and what the representations they learn along the way can tell us about the robot, its motion, and the training process itself.
+My route here was not a straight line. I studied biophysics in Osnabrück, worked on optogenetics with upconversion nanoparticles, then moved into cognitive science with a focus on AI and robotics — building a holonomic Mecanum-wheeled platform and analysing latent representations in neural networks for interpretability. At the German Research Center for Artificial Intelligence (DFKI) I built test infrastructure for multi-sensor perception, migrated a simulation environment from Gazebo to NVIDIA Isaac Sim, and set up RTK-GPS localisation for mobile robots. My master's thesis benchmarked 3D human detection against solar radiation.
 
-Outside the lab: exploring, learning, and a lasting fascination with robots and how they move.
+What ties it together is a fascination with how systems — cells, robots, networks — organise themselves, and a preference for understanding over tuning: if I can show it, I am succeeding; if I cannot explain it, I am not done.
+
+Outside the lab: exploring, learning, and mountains.

@@ -4,9 +4,7 @@ export const site = {
   email: 'j.bajorath@uni-muenster.de',
   links: [
     { label: 'GitHub', href: 'https://github.com/TheExplorer95' },
-    { label: 'Google Scholar', href: '#' },
-    { label: 'LinkedIn', href: '#' },
-    { label: 'AIS group', href: '#' },
+    { label: 'AIS group', href: 'https://www.uni-muenster.de/AISystems/' },
   ],
   nav: [
     { label: 'About', href: '/about' },
