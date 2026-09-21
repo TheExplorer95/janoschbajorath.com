@@ -12,7 +12,7 @@ links:
 ---
 
 <Clip name="capabilities" title="What the controller does">
-**What the controller does** – Forty robots are initialised in uniformly random orientations. Each recovers to a standing posture and tracks its own velocity command, with walk, trot or bound selected by the commanded speed, under the trained domain randomisation and observation noise. Shown for the <span class="aux">RECON + BCE</span> encoder: 36 of the 40 robots stand within five seconds and four do not recover; under <span class="ppo">PPO</span> all 40 recover.
+**What the controller does** – Forty robots are initialised in uniformly random orientations. Each recovers to a standing posture and tracks its own velocity command, with walk, trot or bound selected by the commanded speed, under the trained domain randomisation and observation noise. Shown for the <span class="aux">RECON + BCE</span> encoder.
 </Clip>
 
 ## Abstract
@@ -85,8 +85,6 @@ PPO with discount 0.992, $\lambda$ = 0.9, ratio clip 0.2, entropy weight 0.012, 
 
 </details>
 
-<p class="reading"><strong>Reading the clips.</strong> Labels give the <em>commanded</em> speed. The strip under a robot shows its footfalls: a filled bar where a foot is on the ground, a thin outline where the clock wants it there, in the order front left, front right, rear left, rear right. A red line marks the event; the clip runs at half speed around it, tagged 0.5×. Encoder names carry the poster's colours, <span class="ppo">PPO</span> and <span class="aux">RECON + BCE</span>.</p>
-
 ## State–Representation Coupling
 
 Reading locomotion from the latent requires organisation at two levels. The latent must separate the commanded gaits and speeds (H1), and this order must persist when the domain changes (H2). The encoders are trained with <span class="ppo">PPO</span> alone or with <span class="aux">RECON + BCE</span> added. They are evaluated on steady-state recordings of stand and of walk, trot and bound at five forward speeds each, under nominal dynamics and under domain randomisation with observation noise.
@@ -96,7 +94,7 @@ Reading locomotion from the latent requires organisation at two levels. The late
 <p class="claim">The latent separates the commanded gaits and speeds.</p>
 
 <Clip name="gaits" title="The commanded behaviours">
-**The commanded behaviours** – Stand and the middle of the walk, trot and bound speed bands under nominal dynamics, first at full speed, then at half speed. These are the steady-state conditions the latent is recorded on. The walk realises about 0.25 m/s of its commanded 0.35 m/s.
+**The commanded behaviours** – Stand and the middle of the walk, trot and bound speed bands under nominal dynamics, first at full speed, then at half speed. These are the steady-state conditions the latent is recorded on.
 </Clip>
 
 <Figure src="/figures/where-2026/h1-organisation.png" alt="PCA of the latent for the PPO encoder and the RECON + BCE + PPO encoder, coloured by gait and forward speed.">
@@ -108,7 +106,7 @@ Reading locomotion from the latent requires organisation at two levels. The late
 <p class="claim">This order persists when the body changes.</p>
 
 <Clip name="domain" title="One command, eight bodies">
-**One command, eight bodies** – One trot command on eight robots drawn from the trained domain randomisation, with observation noise. The domain draws alone separate the robots; environments do not collide, so robots that drift together pass through each other.
+**One command, eight bodies** – One trot command on eight robots drawn from the trained domain randomisation, with observation noise. The domain draws alone separate the robots.
 </Clip>
 
 <Figure src="/figures/where-2026/h2-generalisation.svg" alt="Deviation of the latent from its condition mean in the first two principal components, and variance of behaviour and domain per principal component, for both encoders.">
@@ -150,7 +148,7 @@ A disturbance from the environment reaches the policy only through the latent. R
 <p class="claim">Withstanding a disturbance requires the latent's deviation from its mean cycle.</p>
 
 <Clip name="push" title="A lateral push under latent substitution" wide>
-**A lateral push under latent substitution** – At trot, seen from behind, <span class="aux">RECON + BCE</span> above and <span class="ppo">PPO</span> below. From the red tick on, the latent the policy reads is its mean cycle plus the retained part of its deviation; the red band is the 0.2 s push of 100 N. With the whole deviation both stand. With components 9–16 alone <span class="aux">RECON + BCE</span> stands and <span class="ppo">PPO</span> falls; with components 1–8 alone both fall. With none of it, and no push, both fall about two seconds later.
+**A lateral push under latent substitution** – At trot, seen from behind, <span class="aux">RECON + BCE</span> above and <span class="ppo">PPO</span> below. From the red tick on, the latent the policy reads is its mean cycle plus the retained part of its deviation; the red band is the 0.2 s push of 100 N.
 </Clip>
 
 <Figure src="/figures/where-2026/t3h1-robustness.svg" alt="One trot trial on the ring of its mean cycle with the deviation as height, the share of each principal component in the policy's feedback term, and survival rate over push force per retained part of the deviation, for both encoders.">
