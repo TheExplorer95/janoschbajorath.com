@@ -2,6 +2,4 @@ I am a PhD researcher in the [Autonomous Intelligent Systems](https://www.uni-mu
 
 My route here was not a straight line. I studied biophysics in Osnabrück, worked on optogenetics with upconversion nanoparticles, then moved into cognitive science with a focus on AI and robotics — building a holonomic Mecanum-wheeled platform and analysing latent representations in neural networks for interpretability. At the German Research Center for Artificial Intelligence (DFKI) I built test infrastructure for multi-sensor perception, migrated a simulation environment from Gazebo to NVIDIA Isaac Sim, and set up RTK-GPS localisation for mobile robots. My master's thesis benchmarked 3D human detection against solar radiation.
 
-What ties it together is a fascination with how systems — cells, robots, networks — organise themselves, and a preference for understanding over tuning: if I can show it, I am succeeding; if I cannot explain it, I am not done.
-
-Outside the lab: exploring, learning, and mountains.
+What ties it together is a fascination with how systems — cells, robots, networks — organise themselves.
