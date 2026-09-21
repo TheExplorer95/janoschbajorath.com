@@ -1,0 +1,153 @@
+{
+  "jump": {
+    "src": "/videos/where-2026/jump.mp4",
+    "poster": "/videos/where-2026/jump.jpg",
+    "width": 1920,
+    "height": 844,
+    "duration_s": 5.6,
+    "bytes": 1412659,
+    "crf": 23,
+    "tiles": [
+      {
+        "run": "dynamics-contacts/26-09-15_01-18-50_dynamics-contacts",
+        "task": "video_jump_advance-quarter",
+        "recording": "dynamics-contacts/26-09-15_01-18-50_dynamics-contacts/evaluations/video_jump_advance-quarter/evaluation_data_260921_104937.parquet",
+        "event_frame": 144
+      },
+      {
+        "run": "rl-only/26-09-15_12-58-26_rl-only",
+        "task": "video_jump_advance-quarter",
+        "recording": "rl-only/26-09-15_12-58-26_rl-only/evaluations/video_jump_advance-quarter/evaluation_data_260921_104826.parquet",
+        "event_frame": 144
+      }
+    ]
+  },
+  "capabilities": {
+    "src": "/videos/where-2026/capabilities.mp4",
+    "poster": "/videos/where-2026/capabilities.jpg",
+    "width": 1920,
+    "height": 1080,
+    "duration_s": 9.92,
+    "bytes": 3573937,
+    "crf": 23,
+    "tiles": [
+      {
+        "run": "dynamics-contacts/26-09-15_01-18-50_dynamics-contacts",
+        "task": "video_capabilities",
+        "recording": null,
+        "event_frame": null
+      }
+    ]
+  },
+  "gaits": {
+    "src": "/videos/where-2026/gaits.mp4",
+    "poster": "/videos/where-2026/gaits.jpg",
+    "width": 1920,
+    "height": 1272,
+    "duration_s": 9.0,
+    "bytes": 3263536,
+    "crf": 23,
+    "tiles": [
+      {
+        "run": "dynamics-contacts/26-09-15_01-18-50_dynamics-contacts",
+        "task": "video_stand",
+        "recording": "dynamics-contacts/26-09-15_01-18-50_dynamics-contacts/evaluations/video_stand/evaluation_data_260921_103650.parquet",
+        "event_frame": null
+      },
+      {
+        "run": "dynamics-contacts/26-09-15_01-18-50_dynamics-contacts",
+        "task": "video_walk",
+        "recording": "dynamics-contacts/26-09-15_01-18-50_dynamics-contacts/evaluations/video_walk/evaluation_data_260921_103923.parquet",
+        "event_frame": null
+      },
+      {
+        "run": "dynamics-contacts/26-09-15_01-18-50_dynamics-contacts",
+        "task": "video_trot",
+        "recording": "dynamics-contacts/26-09-15_01-18-50_dynamics-contacts/evaluations/video_trot/evaluation_data_260921_104156.parquet",
+        "event_frame": null
+      },
+      {
+        "run": "dynamics-contacts/26-09-15_01-18-50_dynamics-contacts",
+        "task": "video_bound",
+        "recording": "dynamics-contacts/26-09-15_01-18-50_dynamics-contacts/evaluations/video_bound/evaluation_data_260921_104421.parquet",
+        "event_frame": null
+      }
+    ]
+  },
+  "domain": {
+    "src": "/videos/where-2026/domain.mp4",
+    "poster": "/videos/where-2026/domain.jpg",
+    "width": 1920,
+    "height": 1080,
+    "duration_s": 7.48,
+    "bytes": 3736075,
+    "crf": 23,
+    "tiles": [
+      {
+        "run": "dynamics-contacts/26-09-15_01-18-50_dynamics-contacts",
+        "task": "video_domain",
+        "recording": null,
+        "event_frame": null
+      }
+    ]
+  },
+  "push": {
+    "src": "/videos/where-2026/push.mp4",
+    "poster": "/videos/where-2026/push.jpg",
+    "width": 1920,
+    "height": 952,
+    "duration_s": 4.8,
+    "bytes": 1691964,
+    "crf": 23,
+    "tiles": [
+      {
+        "run": "dynamics-contacts/26-09-15_01-18-50_dynamics-contacts",
+        "task": "video_push_m100_identity",
+        "recording": "dynamics-contacts/26-09-15_01-18-50_dynamics-contacts/evaluations/video_push_m100_identity/evaluation_data_260921_105232.parquet",
+        "event_frame": 144
+      },
+      {
+        "run": "dynamics-contacts/26-09-15_01-18-50_dynamics-contacts",
+        "task": "video_push_m100_trailing",
+        "recording": "dynamics-contacts/26-09-15_01-18-50_dynamics-contacts/evaluations/video_push_m100_trailing/evaluation_data_260921_105507.parquet",
+        "event_frame": 144
+      },
+      {
+        "run": "dynamics-contacts/26-09-15_01-18-50_dynamics-contacts",
+        "task": "video_push_m100_leading",
+        "recording": "dynamics-contacts/26-09-15_01-18-50_dynamics-contacts/evaluations/video_push_m100_leading/evaluation_data_260921_105351.parquet",
+        "event_frame": 144
+      },
+      {
+        "run": "dynamics-contacts/26-09-15_01-18-50_dynamics-contacts",
+        "task": "video_push_m0_blind",
+        "recording": "dynamics-contacts/26-09-15_01-18-50_dynamics-contacts/evaluations/video_push_m0_blind/evaluation_data_260921_105112.parquet",
+        "event_frame": 144
+      },
+      {
+        "run": "rl-only/26-09-15_12-58-26_rl-only",
+        "task": "video_push_m100_identity",
+        "recording": "rl-only/26-09-15_12-58-26_rl-only/evaluations/video_push_m100_identity/evaluation_data_260921_105756.parquet",
+        "event_frame": 144
+      },
+      {
+        "run": "rl-only/26-09-15_12-58-26_rl-only",
+        "task": "video_push_m100_trailing",
+        "recording": "rl-only/26-09-15_12-58-26_rl-only/evaluations/video_push_m100_trailing/evaluation_data_260921_110036.parquet",
+        "event_frame": 144
+      },
+      {
+        "run": "rl-only/26-09-15_12-58-26_rl-only",
+        "task": "video_push_m100_leading",
+        "recording": "rl-only/26-09-15_12-58-26_rl-only/evaluations/video_push_m100_leading/evaluation_data_260921_105916.parquet",
+        "event_frame": 144
+      },
+      {
+        "run": "rl-only/26-09-15_12-58-26_rl-only",
+        "task": "video_push_m0_blind",
+        "recording": "rl-only/26-09-15_12-58-26_rl-only/evaluations/video_push_m0_blind/evaluation_data_260921_105639.parquet",
+        "event_frame": 144
+      }
+    ]
+  }
+}

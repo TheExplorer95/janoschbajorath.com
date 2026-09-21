@@ -1,12 +1,22 @@
 ---
 import YouTube from './YouTube.astro';
-interface Props { title: string; note?: string; id?: string }
-const { title, note, id } = Astro.props;
+import clips from '../data/where-2026-clips.json';
+interface Props { title: string; note?: string; id?: string; name?: string; wide?: boolean }
+const { title, note, id, name, wide = false } = Astro.props;
+const clip = name ? (clips as Record<string, any>)[name] : undefined;
+if (name && !clip) throw new Error(`Clip "${name}" is not in where-2026-clips.json; render it first.`);
+const hasCaption = Astro.slots.has('default');
 ---
-{id ? (
+{clip ? (
+  <figure class:list={['clip', { 'clip--breakout': wide }]}>
+    <video src={clip.src} poster={clip.poster} width={clip.width} height={clip.height}
+           muted loop playsinline controls preload="metadata" data-autoplay aria-label={title}></video>
+    <figcaption>{hasCaption ? <slot /> : <><strong>{title}</strong>{note && <> – {note}</>}</>}</figcaption>
+  </figure>
+) : id ? (
   <figure class="clip">
     <YouTube id={id} title={title} />
-    <figcaption><strong>{title}</strong>{note && <> – {note}</>}</figcaption>
+    <figcaption>{hasCaption ? <slot /> : <><strong>{title}</strong>{note && <> – {note}</>}</>}</figcaption>
   </figure>
 ) : (
   <figure class="clip">
@@ -15,6 +25,34 @@ const { title, note, id } = Astro.props;
       <strong>{title}</strong>
       <span class="state">Video in preparation</span>
     </div>
-    {note && <figcaption>{note}</figcaption>}
+    {(hasCaption || note) && <figcaption>{hasCaption ? <slot /> : note}</figcaption>}
   </figure>
 )}
+
+<script>
+  // Play a clip only while at least half of it is on screen; never restart one the reader
+  // paused by hand; do nothing under reduced motion.
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const videos = document.querySelectorAll<HTMLVideoElement>('video[data-autoplay]');
+  if (!reduce && 'IntersectionObserver' in window) {
+    const observer = new IntersectionObserver((entries) => {
+      for (const entry of entries) {
+        const video = entry.target as HTMLVideoElement;
+        if (entry.isIntersecting) {
+          if (!video.dataset.userPaused) video.play().catch(() => {});
+        } else if (!video.paused) {
+          video.dataset.autoPaused = '1';
+          video.pause();
+        }
+      }
+    }, { threshold: 0.5 });
+    videos.forEach((video) => {
+      video.addEventListener('pause', () => {
+        if (video.dataset.autoPaused) delete video.dataset.autoPaused;
+        else video.dataset.userPaused = '1';
+      });
+      video.addEventListener('play', () => { delete video.dataset.userPaused; });
+      observer.observe(video);
+    });
+  }
+</script>

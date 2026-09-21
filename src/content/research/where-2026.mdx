@@ -6,19 +6,20 @@ authors: ["Janosch Bajorath", "Malte Schilling"]
 kind: poster
 venue: "WHERE 2026, Trento"
 date: 2026-09-21
-status: "This page accompanies the poster at WHERE 2026 (21–27 September 2026). Videos of the experiments are being recorded and will replace the placeholders below."
 links:
   poster: "/files/where-2026-poster.pdf"
   lab: "https://www.uni-muenster.de/AISystems/"
 ---
+
+<Clip name="capabilities" title="What the controller does">
+**What the controller does** – Forty robots are initialised in uniformly random orientations. Each recovers to a standing posture and tracks its own velocity command, with walk, trot or bound selected by the commanded speed, under the trained domain randomisation and observation noise. Shown for the <span class="aux">RECON + BCE</span> encoder: 36 of the 40 robots stand within five seconds and four do not recover; under <span class="ppo">PPO</span> all 40 recover.
+</Clip>
 
 ## Abstract
 
 Learned quadruped locomotion is largely *installed* rather than *acquired*. Gait rewards [1], reference motions [2] and pattern generators [3, 4] restrict the state and action spaces to a solution known in advance. We assume that this restriction narrows the search for the *locomotion manifold*, the low-dimensional subspace on which locomotion takes place. The aim is a learner that discovers this manifold under interoceptive rewards and learns to traverse it. The behaviour that emerges should be adaptive and robust to changes in command and domain [5].
 
 In the absence of such priors, a reward derived from interoceptive quantities provides little information about behaviour, and learning converges to a single gait that is viable across all commanded velocities. The structure the policy requires must then be supplied by the representation, through the features it extracts from the observations [6] and the information it discards. The requirements on such a representation can only be established where the behaviour exists and is labelled. Stage one therefore proceeds *top-down*. Gaits and clock remain prescribed, and the gradient that shapes the representation is the factor varied. We examine whether an auxiliary prediction objective organises a latent representation that generalises, and whether the policy's control depends on it.
-
-<Clip title="What the controller does" note="Forty robots are thrown down in arbitrary poses. Each stands up and follows its own command, with walk, trot or bound selected by the commanded speed, under the trained domain randomisation and observation noise." />
 
 ## Contributions
 
@@ -28,11 +29,63 @@ Without gait priors, locomotion must be read and realised from the latent alone.
 - **[Representation–Action Coupling](#representationaction-coupling).** With the organised latent, the policy adapts to the domain through the components the behaviour does not occupy, and the latent closes the control loop as its feedback signal.
 - **[Environment–Representation Coupling](#environmentrepresentation-coupling).** Withstanding a disturbance requires the latent's deviation from its mean cycle. With the organised latent, only the components the behaviour does not occupy are required.
 
-## Architecture
+## Setup
 
 <Figure src="/figures/where-2026/architecture.svg" alt="Architecture: a proprioception encoder compresses the observation history into the latent, which the control policy maps with the command to joint targets. A dynamics decoder and a contact head add auxiliary gradients to the encoder.">
 **Shaping Gradients** – Squiggles trace the gradients that shape the encoder. <span class="ppo">PPO</span> reaches it through the policy, while <span class="aux">RECON and BCE</span> reach it only with the auxiliary objective. The encoder compresses the noisy history $s^{p}_{[t-30:t]}$ into the latent representation $z_t \in \mathbb{R}^{16}$. The control policy maps $z_t$ and the command $\text{cmd}_t$ to joint targets $a_t$. The command holds the base twist $v^{\text{base}} \in \mathbb{R}^{3}$, the phase $\varphi^{\text{foot}}_t \in \mathbb{R}^{4}$ of each foot and the PD gains $k^{\text{joint}}_p, k^{\text{joint}}_d \in \mathbb{R}^{12}$ of each joint. The commanded speed selects the gait, stepping frequency $f$ and duty $d$, which advance and offset each foot's phase. The auxiliary objective adds a KL regulariser on $z_t$, a <span class="aux">dynamics decoder</span> predicting $s^{p}$ and $v^{\text{base}}$ and a <span class="aux">contact head</span> predicting $c^{\text{foot}}$.
 </Figure>
+
+<div class="params">
+<div>
+<h4>Robot and control</h4>
+<dl>
+<dt>Robot</dt><dd>Unitree Go1, 12 joints, simulated in Isaac Lab</dd>
+<dt>Control</dt><dd>50 Hz policy, 200 Hz physics and PD loop</dd>
+<dt>Action</dt><dd>joint position offsets about the nominal pose</dd>
+<dt>Command</dt><dd>forward −1.4…2.5 m/s, lateral ±0.9 m/s, yaw ±2.0 rad/s</dd>
+</dl>
+</div>
+<div>
+<h4>Representation and policy</h4>
+<dl>
+<dt>History</dt><dd>11 samples spanning the last 30 control steps (0.6 s), noisy</dd>
+<dt>Encoder</dt><dd>MLP 512–256–128, ELU, to a 16-dimensional Gaussian latent</dd>
+<dt>Policy</dt><dd>MLP 256–256–128, ELU</dd>
+<dt>Decoders</dt><dd>dynamics 128–256–512, contact 128–128</dd>
+<dt>KL</dt><dd>weight 0.5, free bits 0.1</dd>
+</dl>
+</div>
+<div>
+<h4>Training and evaluation</h4>
+<dl>
+<dt>Environments</dt><dd>4096 in parallel, flat ground</dd>
+<dt>Updates</dt><dd>7500 PPO updates, 98 304 samples each</dd>
+<dt>Evaluated</dt><dd>checkpoint 7250, deterministic actions</dd>
+<dt>Randomised</dt><dd>friction, restitution, masses, centre of mass, PD gains, motor torque envelope</dd>
+</dl>
+</div>
+</div>
+
+<table class="gaits-table">
+<thead><tr><th>Gait</th><th>Commanded speed</th><th>Stride frequency</th><th>Duty</th></tr></thead>
+<tbody>
+<tr><td>Stand</td><td>0</td><td>–</td><td>1.00</td></tr>
+<tr><td>Walk</td><td>below 0.7 m/s</td><td>1.5–2.3 Hz</td><td>0.75</td></tr>
+<tr><td>Trot</td><td>0.7–1.7 m/s</td><td>2.3–3.4 Hz</td><td>0.50</td></tr>
+<tr><td>Bound</td><td>above 1.7 m/s</td><td>3.4 Hz</td><td>0.35</td></tr>
+</tbody>
+</table>
+
+<details class="more">
+<summary>Randomisation ranges and PPO settings</summary>
+
+Static friction 1.0–1.25, dynamic friction 0.5–1.0, restitution 0–0.4. Trunk mass −1…+2 kg, other links ×0.95–1.05. Centre of mass ±0.10 m (x), ±0.05 m (y, z). PD stiffness and damping ×0.9–1.1 per robot. Motor torque envelope ×0.9–1.0 per robot. Observation noise is uniform and additive per channel, for example ±0.15 rad/s on the angular velocity and ±0.05 on the projected gravity.
+
+PPO with discount 0.992, $\lambda$ = 0.9, ratio clip 0.2, entropy weight 0.012, four mini-batches, two actor and four critic update steps per update. Adam, actor learning rate $10^{-4}$ adapted to a KL target of 0.015, critic learning rate $8 \times 10^{-4}$.
+
+</details>
+
+<p class="reading"><strong>Reading the clips.</strong> Labels give the <em>commanded</em> speed. The strip under a robot shows its footfalls: a filled bar where a foot is on the ground, a thin outline where the clock wants it there, in the order front left, front right, rear left, rear right. A red line marks the event; the clip runs at half speed around it, tagged 0.5×. Encoder names carry the poster's colours, <span class="ppo">PPO</span> and <span class="aux">RECON + BCE</span>.</p>
 
 ## State–Representation Coupling
 
@@ -40,13 +93,23 @@ Reading locomotion from the latent requires organisation at two levels. The late
 
 ### H1 · Behaviour
 
+<p class="claim">The latent separates the commanded gaits and speeds.</p>
+
+<Clip name="gaits" title="The commanded behaviours">
+**The commanded behaviours** – Stand and the middle of the walk, trot and bound speed bands under nominal dynamics, first at full speed, then at half speed. These are the steady-state conditions the latent is recorded on. The walk realises about 0.25 m/s of its commanded 0.35 m/s.
+</Clip>
+
 <Figure src="/figures/where-2026/h1-organisation.png" alt="PCA of the latent for the PPO encoder and the RECON + BCE + PPO encoder, coloured by gait and forward speed.">
 **H1 Behaviour** – PCA of latent $z_t$ per encoder (% variance), each panel on its own scale. Both gradients separate the commanded gaits and speeds but impose different geometries on the behavioural subspace. <span class="ppo">PPO</span> shapes each gait into a displaced, flattened loop and encodes speed by position. Added <span class="aux">RECON + BCE</span> gradients organise the subspace into thin concentric rings centred on the stand condition, with speed as radius and walk and trot orthogonal to bound.
 </Figure>
 
-<Clip title="The commanded behaviours" note="Stand and the middle of the walk, trot and bound speed bands under nominal dynamics, one robot each, seen from the side. These are the steady-state conditions the latent is recorded on." />
-
 ### H2 · Domain
+
+<p class="claim">This order persists when the body changes.</p>
+
+<Clip name="domain" title="One command, eight bodies">
+**One command, eight bodies** – One trot command on eight robots drawn from the trained domain randomisation, with observation noise. The domain draws alone separate the robots; environments do not collide, so robots that drift together pass through each other.
+</Clip>
 
 <Figure src="/figures/where-2026/h2-generalisation.svg" alt="Deviation of the latent from its condition mean in the first two principal components, and variance of behaviour and domain per principal component, for both encoders.">
 **H2 Domain** – Deviation of the latent from its condition mean and variance of behaviour and domain per component, under domain randomisation. With <span class="aux">RECON + BCE</span> the domain leaves the gait coordinates nearly unchanged. Relative to behaviour, the variance it induces is more than twenty times smaller than under <span class="ppo">PPO</span>. The domain is mainly encoded in components 9–16, while behaviour occupies components 1–8.
@@ -54,13 +117,13 @@ Reading locomotion from the latent requires organisation at two levels. The late
 $D$ is the dispersion of a command condition (gait and speed) under nominal dynamics, the mean distance of its latent states from their centroid. Deviations are in units of $D$, variances in $D^2$.
 </Figure>
 
-<Clip title="One command, eight bodies" note="One trot command on eight robots drawn from the trained domain randomisation, with observation noise. The domain draws alone separate the robots." />
-
 ## Representation–Action Coupling
 
 Realising locomotion from the latent requires two properties of the policy. It must draw its adaptation to behaviour and domain from the latent (H1), and it must act on the latent in closed loop (H2). At present the command prescribes the gait, while the latent reports the realised motion. H1 relates each principal component to the joint targets under domain randomisation, with totals per condition in the strips. H2 advances the clock by a quarter cycle during steady locomotion and measures the share of the latent in the joint targets, shown for trot.
 
 ### H1 · Adaptation
+
+<p class="claim">The policy adapts to the domain through the components the behaviour does not occupy.</p>
 
 <Figure src="/figures/where-2026/h1-allocation.svg" alt="Heat maps per principal component and commanded speed of the latent's motion within a gait, the shift of the joint targets between domain draws and the action response, for both encoders.">
 **H1 Adaptation** – Share of each component in the latent's motion within a gait (*Behaviour*), the shift of the joint targets between domain draws (*Domain*) and the action response per unit change (*Sensitivity*). With <span class="aux">RECON + BCE</span> the behaviour occupies the leading components and grows with gait and speed, while the domain shift sits on components 9–16, independent of the gait. The action responds most strongly to these. Under <span class="ppo">PPO</span> the domain shift falls on the gait's components.
@@ -68,11 +131,15 @@ Realising locomotion from the latent requires two properties of the policy. It m
 
 ### H2 · Latent Feedback
 
+<p class="claim">The policy acts on the latent in closed loop.</p>
+
+<Clip name="jump" title="A quarter-cycle clock step">
+**A quarter-cycle clock step** – During a steady trot the gait clock is advanced by a quarter cycle (red line). The feet follow the clock at once: one stance is cut short and the footfalls stay on the clock's outline. The joint targets do not: their distance from the steady cycle jumps about ninefold and returns to its level within three to four strides, under both <span class="aux">RECON + BCE</span> (left) and <span class="ppo">PPO</span> (right).
+</Clip>
+
 <Figure src="/figures/where-2026/t2h2-state-feedback.svg" alt="Calf joint target around a quarter-cycle clock step with the latent's part shaded, the latent's share per joint and gait cycle, and the part of the step followed at once per phase and gait, for both encoders.">
 **H2 Latent Feedback** – After a quarter-cycle step of the clock, *Feedback* shades the latent's part of one calf target, *Propagation* gives the latent's share per joint and cycle and *Phase Dependence* the part of the step followed at once. The latent's share rises from about 2 % to 19–67 % and decays over three to four cycles. The part followed at once depends on the phase of the step and falls from two thirds at walk to one third at bound. The latent thus closes the control loop under both gradients.
 </Figure>
-
-<Clip title="A quarter-cycle clock step" note="During a steady trot the gait clock is advanced by a quarter cycle, about 3.5 s into the rollout. The robot is seen from the side while it realigns its stride with the clock." />
 
 ## Environment–Representation Coupling
 
@@ -80,11 +147,15 @@ A disturbance from the environment reaches the policy only through the latent. R
 
 ### H1 · Robustness
 
+<p class="claim">Withstanding a disturbance requires the latent's deviation from its mean cycle.</p>
+
+<Clip name="push" title="A lateral push under latent substitution" wide>
+**A lateral push under latent substitution** – At trot, seen from behind, <span class="aux">RECON + BCE</span> above and <span class="ppo">PPO</span> below. From the red tick on, the latent the policy reads is its mean cycle plus the retained part of its deviation; the red band is the 0.2 s push of 100 N. With the whole deviation both stand. With components 9–16 alone <span class="aux">RECON + BCE</span> stands and <span class="ppo">PPO</span> falls; with components 1–8 alone both fall. With none of it, and no push, both fall about two seconds later.
+</Clip>
+
 <Figure src="/figures/where-2026/t3h1-robustness.svg" alt="One trot trial on the ring of its mean cycle with the deviation as height, the share of each principal component in the policy's feedback term, and survival rate over push force per retained part of the deviation, for both encoders.">
 **H1 Robustness** – *Latent Divergence* shows one trot trial on the ring of its mean cycle with the deviation as height, before and after the deviation is withheld (Feedforward). *Latent Feedback* gives the share of each component in the policy's feedback term. *Push Tolerance* gives the survival at trot under lateral pushes per retained part of the deviation. Without the deviation the latent diverges and the robot falls without a push. With <span class="aux">RECON + BCE</span>, components 9–16 alone nearly preserve the push tolerance (103 N against 118 N), while components 1–8 alone do not. Under <span class="ppo">PPO</span> neither part suffices.
 </Figure>
-
-<Clip title="A lateral push under latent substitution" note="At trot, seen from behind, for both encoders: the deviation withheld with no push, then a lateral push of 100 N held for 0.2 s with the whole deviation, with components 1–8 alone and with components 9–16 alone." />
 
 ## Conclusion
 

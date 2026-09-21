@@ -99,7 +99,23 @@ main { padding: 2.5rem 0 4rem; }
 .plot figcaption p, .clip figcaption p { margin: 0 0 0.5rem; }
 .plot figcaption strong, .clip figcaption strong { color: var(--ink); }
 
-.clip { max-width: 44rem; }
+.clip { max-width: none; }
+.clip video { display: block; width: 100%; height: auto; border-radius: 4px; background: #181a18; }
+.clip--breakout { width: min(80rem, 100vw - 2.5rem); margin-left: 50%; transform: translateX(-50%); }
+.clip--breakout figcaption { max-width: var(--measure-wide); margin-inline: auto; }
+.clip .clip-placeholder, .clip .video { max-width: 44rem; }
+
+.params { display: grid; grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr)); gap: 1.25rem 2rem; margin: 1.5rem 0; }
+.params h4 { margin: 0 0 0.4rem; font-size: 0.85rem; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); }
+.params dl { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 0.2rem 0.9rem; font-size: 0.92rem; }
+.params dt { color: var(--muted); }
+.params dd { margin: 0; }
+.gaits-table { border-collapse: collapse; font-size: 0.92rem; margin: 1rem 0; }
+.gaits-table th, .gaits-table td { text-align: left; padding: 0.3rem 1.2rem 0.3rem 0; border-bottom: 1px solid var(--rule); }
+details.more { margin: 1rem 0; font-size: 0.92rem; }
+details.more summary { cursor: pointer; color: var(--muted); }
+.reading { font-size: 0.92rem; color: var(--muted); border-left: 3px solid var(--rule); padding-left: 0.9rem; margin: 1.25rem 0; }
+.claim { font-weight: 600; }
 .clip .video { margin: 0; }
 .clip-placeholder {
   aspect-ratio: 16 / 9; display: flex; flex-direction: column; align-items: center; justify-content: center;
