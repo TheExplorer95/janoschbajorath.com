@@ -30,9 +30,15 @@ Personal academic site: one central place for who Janosch is and what he does. H
 research: `title, subtitle?, summary, authors[], kind (poster|paper|talk|project), venue?, date, status?, links{poster,paper,code,videos,slides,lab}`
 teaching: `title, summary, format, date, links{…}`
 
-## Copy rules for WHERE 2026 material (from the poster programme note)
+## WHERE 2026 page (revised 2026-09-21)
 
-Never: "robustness", "axis", "pillar", the trot-collapse anecdote, the gait-schedule speed-coupling mechanism ("by the environment" only). On the site, not the wall: the five-level adaptivity ladder, the "how these were run" statement.
+The page mirrors the final poster; the poster's wording is the source of truth and is carried over lightly adapted. The earlier copy rules (no "robustness", the road, the five-level adaptivity ladder, "how these were run") are superseded by the poster and no longer apply.
+
+- Structure: Abstract (the poster's Vision + Problem) · Contributions (three couplings, linked to their sections) · Architecture · one `##` section per coupling with one `###` per hypothesis (figure, caption, clip) · Conclusion (stage one, stage two) · References.
+- `<Figure src alt>caption</Figure>`: figures live in `public/figures/where-2026/`, converted from the poster's PDFs with `pdftocairo -svg` (the PCA scatter as a 2400 px PNG, its SVG is 14 MB). They carry dark ink on a transparent ground, so `.plot img` keeps a white panel in both colour schemes.
+- `<Clip title note id? />`: without `id` a 16:9 "video in preparation" placeholder, with `id` the YouTube embed. Slots follow gait_rl's `config/eval/video_*.py`: capabilities (abstract), gaits (H1 Behaviour), domain (H2 Domain), jump (H2 Latent Feedback), push (H1 Robustness).
+- `.ppo` / `.aux` spans colour the gradient names as on the poster (PPO green, RECON + BCE purple).
+- `katex` is pinned to the 0.16 line that `rehype-katex` renders with; the 0.18 stylesheet renames the sizing classes and sub- and superscripts lose their size.
 
 ## Launch checklist
 
@@ -40,5 +46,5 @@ Never: "robustness", "axis", "pillar", the trot-collapse anecdote, the gait-sche
 - [ ] GitHub repo created, Pages source = GitHub Actions, custom domain set, HTTPS enforced
 - [ ] Portrait, tagline, real links in `src/data/site.ts`
 - [ ] CV PDF in `public/files/`
-- [ ] WHERE poster PDF in `public/files/` once final, linked from the project page
+- [x] WHERE poster PDF in `public/files/` once final, linked from the project page
 - [ ] Teaching entries replace the placeholder

@@ -1,42 +1,104 @@
 ---
-title: "Proprioceptive quadruped locomotion without gait priors, stage one: a learnable representation shaped by an auxiliary dynamics objective structures the locomotion manifold"
-subtitle: "Three stages towards velocity-adaptive locomotion under interoceptive rewards: learnable feature extraction, learnable discovery of motion primitives and the emergence of behaviour."
+title: "Proprioceptive quadruped locomotion without gait priors, stage one: a learnable representation shaped by an auxiliary prediction objective organises the locomotion manifold"
+subtitle: "Three stages towards adaptive and robust locomotion under interoceptive rewards: (1) learnable feature extraction, (2) learnable discovery of motion primitives and (3) the emergence of behaviour."
 summary: "Poster at WHERE 2026 — Walk the Future, International Euregio Summer School on Legged Robots, Trento."
 authors: ["Janosch Bajorath", "Malte Schilling"]
 kind: poster
 venue: "WHERE 2026, Trento"
 date: 2026-09-21
-status: "This page accompanies the poster and is being extended during and after the summer school (21–27 September 2026). Sections marked as such are still to come."
+status: "This page accompanies the poster at WHERE 2026 (21–27 September 2026). Videos of the experiments are being recorded and will replace the placeholders below."
 links:
-  lab: "https://www.uni-muenster.de/"
+  poster: "/files/where-2026-poster.pdf"
+  lab: "https://www.uni-muenster.de/AISystems/"
 ---
 
-## The road
+## Abstract
 
-*Build it → understand it → take it apart → let it emerge.* Today sits between the first two stations: a controller built from known ingredients that walks, trots and bounds, whose latent can be read.
+Learned quadruped locomotion is largely *installed* rather than *acquired*. Gait rewards [1], reference motions [2] and pattern generators [3, 4] restrict the state and action spaces to a solution known in advance. We assume that this restriction narrows the search for the *locomotion manifold*, the low-dimensional subspace on which locomotion takes place. The aim is a learner that discovers this manifold under interoceptive rewards and learns to traverse it. The behaviour that emerges should be adaptive and robust to changes in command and domain [5].
 
-## Architecture and the three gradient sources
+In the absence of such priors, a reward derived from interoceptive quantities provides little information about behaviour, and learning converges to a single gait that is viable across all commanded velocities. The structure the policy requires must then be supplied by the representation, through the features it extracts from the observations [6] and the information it discards. The requirements on such a representation can only be established where the behaviour exists and is labelled. Stage one therefore proceeds *top-down*. Gaits and clock remain prescribed, and the gradient that shapes the representation is the factor varied. We examine whether an auxiliary prediction objective organises a latent representation that generalises, and whether the policy's control depends on it.
 
-*Diagram and description to come.* An encoder over the proprioceptive input window produces the latent $z_t$; the base policy turns $z_t$, the command and PD gains into actions. Three gradient sources shape the encoder: reinforcement learning alone, plus a dynamics-reconstruction objective, plus a contact head.
+<Clip title="What the controller does" note="Forty robots are thrown down in arbitrary poses. Each stands up and follows its own command, with walk, trot or bound selected by the commanded speed, under the trained domain randomisation and observation noise." />
 
-## Adaptivity: where the controller stands
+## Contributions
 
-At this stage, the environment schedules the kind of gait and its timing. The controller realises each pattern and crosses the switches. The wider ladder, from prescribed to self-owned gaits:
+Without gait priors, locomotion must be read and realised from the latent alone.
 
-1. **Randomised** — the gait is a command: kind, frequency and duty are drawn at random; the controller learns to execute all of them, with no notion of which gait fits which demand.
-2. **Scheduled — today** — the environment prescribes gait kind and timing; the controller realises each pattern and crosses the switches.
-3. **Training-only specification** — the deployed controller receives no gait signal; the specification reaches the encoder only through decoder targets and the reward during training.
-4. **Self-specified** — shaping rewards remain, but the specification they score against comes from the controller itself, not the environment.
-5. **Self-owned** — the controller prescribes the gait from its dynamics and the command, and uncovers the gaits itself; no gait reward.
+- **[State–Representation Coupling](#staterepresentation-coupling).** The gradient of an auxiliary prediction objective organises the latent by behaviour and keeps this order separate from the domain.
+- **[Representation–Action Coupling](#representationaction-coupling).** With the organised latent, the policy adapts to the domain through the components the behaviour does not occupy, and the latent closes the control loop as its feedback signal.
+- **[Environment–Representation Coupling](#environmentrepresentation-coupling).** Withstanding a disturbance requires the latent's deviation from its mean cycle. With the organised latent, only the components the behaviour does not occupy are required.
 
-## What the latent carries
+## Architecture
 
-*Latent map with per-gait cycles and the switching segment — figures and animations to come.*
+<Figure src="/figures/where-2026/architecture.svg" alt="Architecture: a proprioception encoder compresses the observation history into the latent, which the control policy maps with the command to joint targets. A dynamics decoder and a contact head add auxiliary gradients to the encoder.">
+**Shaping Gradients** – Squiggles trace the gradients that shape the encoder. <span class="ppo">PPO</span> reaches it through the policy, while <span class="aux">RECON and BCE</span> reach it only with the auxiliary objective. The encoder compresses the noisy history $s^{p}_{[t-30:t]}$ into the latent representation $z_t \in \mathbb{R}^{16}$. The control policy maps $z_t$ and the command $\text{cmd}_t$ to joint targets $a_t$. The command holds the base twist $v^{\text{base}} \in \mathbb{R}^{3}$, the phase $\varphi^{\text{foot}}_t \in \mathbb{R}^{4}$ of each foot and the PD gains $k^{\text{joint}}_p, k^{\text{joint}}_d \in \mathbb{R}^{12}$ of each joint. The commanded speed selects the gait, stepping frequency $f$ and duty $d$, which advance and offset each foot's phase. The auxiliary objective adds a KL regulariser on $z_t$, a <span class="aux">dynamics decoder</span> predicting $s^{p}$ and $v^{\text{base}}$ and a <span class="aux">contact head</span> predicting $c^{\text{foot}}$.
+</Figure>
 
-## How these were run
+## State–Representation Coupling
 
-*To come:* the matched setup behind every figure — same task, rewards, commands and schedule; a shared graph; what varied was the gradient source.
+Reading locomotion from the latent requires organisation at two levels. The latent must separate the commanded gaits and speeds (H1), and this order must persist when the domain changes (H2). The encoders are trained with <span class="ppo">PPO</span> alone or with <span class="aux">RECON + BCE</span> added. They are evaluated on steady-state recordings of stand and of walk, trot and bound at five forward speeds each, under nominal dynamics and under domain randomisation with observation noise.
 
-## Outlook
+### H1 · Behaviour
 
-Next to remove: the environment clock, then the shaping reward. The policy owns its phase and frequency; gaits emerge from the embodiment; transitions from velocity alone.
+<Figure src="/figures/where-2026/h1-organisation.png" alt="PCA of the latent for the PPO encoder and the RECON + BCE + PPO encoder, coloured by gait and forward speed.">
+**H1 Behaviour** – PCA of latent $z_t$ per encoder (% variance), each panel on its own scale. Both gradients separate the commanded gaits and speeds but impose different geometries on the behavioural subspace. <span class="ppo">PPO</span> shapes each gait into a displaced, flattened loop and encodes speed by position. Added <span class="aux">RECON + BCE</span> gradients organise the subspace into thin concentric rings centred on the stand condition, with speed as radius and walk and trot orthogonal to bound.
+</Figure>
+
+<Clip title="The commanded behaviours" note="Stand and the middle of the walk, trot and bound speed bands under nominal dynamics, one robot each, seen from the side. These are the steady-state conditions the latent is recorded on." />
+
+### H2 · Domain
+
+<Figure src="/figures/where-2026/h2-generalisation.svg" alt="Deviation of the latent from its condition mean in the first two principal components, and variance of behaviour and domain per principal component, for both encoders.">
+**H2 Domain** – Deviation of the latent from its condition mean and variance of behaviour and domain per component, under domain randomisation. With <span class="aux">RECON + BCE</span> the domain leaves the gait coordinates nearly unchanged. Relative to behaviour, the variance it induces is more than twenty times smaller than under <span class="ppo">PPO</span>. The domain is mainly encoded in components 9–16, while behaviour occupies components 1–8.
+
+$D$ is the dispersion of a command condition (gait and speed) under nominal dynamics, the mean distance of its latent states from their centroid. Deviations are in units of $D$, variances in $D^2$.
+</Figure>
+
+<Clip title="One command, eight bodies" note="One trot command on eight robots drawn from the trained domain randomisation, with observation noise. The domain draws alone separate the robots." />
+
+## Representation–Action Coupling
+
+Realising locomotion from the latent requires two properties of the policy. It must draw its adaptation to behaviour and domain from the latent (H1), and it must act on the latent in closed loop (H2). At present the command prescribes the gait, while the latent reports the realised motion. H1 relates each principal component to the joint targets under domain randomisation, with totals per condition in the strips. H2 advances the clock by a quarter cycle during steady locomotion and measures the share of the latent in the joint targets, shown for trot.
+
+### H1 · Adaptation
+
+<Figure src="/figures/where-2026/h1-allocation.svg" alt="Heat maps per principal component and commanded speed of the latent's motion within a gait, the shift of the joint targets between domain draws and the action response, for both encoders.">
+**H1 Adaptation** – Share of each component in the latent's motion within a gait (*Behaviour*), the shift of the joint targets between domain draws (*Domain*) and the action response per unit change (*Sensitivity*). With <span class="aux">RECON + BCE</span> the behaviour occupies the leading components and grows with gait and speed, while the domain shift sits on components 9–16, independent of the gait. The action responds most strongly to these. Under <span class="ppo">PPO</span> the domain shift falls on the gait's components.
+</Figure>
+
+### H2 · Latent Feedback
+
+<Figure src="/figures/where-2026/t2h2-state-feedback.svg" alt="Calf joint target around a quarter-cycle clock step with the latent's part shaded, the latent's share per joint and gait cycle, and the part of the step followed at once per phase and gait, for both encoders.">
+**H2 Latent Feedback** – After a quarter-cycle step of the clock, *Feedback* shades the latent's part of one calf target, *Propagation* gives the latent's share per joint and cycle and *Phase Dependence* the part of the step followed at once. The latent's share rises from about 2 % to 19–67 % and decays over three to four cycles. The part followed at once depends on the phase of the step and falls from two thirds at walk to one third at bound. The latent thus closes the control loop under both gradients.
+</Figure>
+
+<Clip title="A quarter-cycle clock step" note="During a steady trot the gait clock is advanced by a quarter cycle, about 3.5 s into the rollout. The robot is seen from the side while it realigns its stride with the clock." />
+
+## Environment–Representation Coupling
+
+A disturbance from the environment reaches the policy only through the latent. Robust locomotion requires that the latent registers it as a deviation from its mean cycle and that the policy acts on this deviation (H1). Pushes of 0.2 s are applied at the middle of each gait band, with 0–200 N in twelve levels, four directions and eight onset phases. From the onset, the latent the policy reads is replaced by its mean cycle plus a selected part of its deviation. Both policies are evaluated under nominal dynamics.
+
+### H1 · Robustness
+
+<Figure src="/figures/where-2026/t3h1-robustness.svg" alt="One trot trial on the ring of its mean cycle with the deviation as height, the share of each principal component in the policy's feedback term, and survival rate over push force per retained part of the deviation, for both encoders.">
+**H1 Robustness** – *Latent Divergence* shows one trot trial on the ring of its mean cycle with the deviation as height, before and after the deviation is withheld (Feedforward). *Latent Feedback* gives the share of each component in the policy's feedback term. *Push Tolerance* gives the survival at trot under lateral pushes per retained part of the deviation. Without the deviation the latent diverges and the robot falls without a push. With <span class="aux">RECON + BCE</span>, components 9–16 alone nearly preserve the push tolerance (103 N against 118 N), while components 1–8 alone do not. Under <span class="ppo">PPO</span> neither part suffices.
+</Figure>
+
+<Clip title="A lateral push under latent substitution" note="At trot, seen from behind, for both encoders: the deviation withheld with no push, then a lateral push of 100 N held for 0.2 s with the whole deviation, with components 1–8 alone and with components 9–16 alone." />
+
+## Conclusion
+
+**Stage one.** The auxiliary prediction objective organises the latent by behaviour and keeps the domain separate from it. The policy then adapts to the domain and withstands disturbances through the components the behaviour does not occupy. Ongoing work on *co-development* examines across training epochs whether the latent organises motion before the policy realises behaviour from it.
+
+**Stage two.** The clock is removed next. The encoder does not observe the clock, and its latent already completes one loop per stride. It should therefore be able to provide the phase. Then the prescribed gaits are removed, so that the learner discovers motion primitives.
+
+## References
+
+<ol class="references">
+  <li>G. B. Margolis, P. Agrawal. Walk These Ways: Tuning Robot Control for Generalization with Multiplicity of Behavior. CoRL 2022.</li>
+  <li>A. L. Mitchell et al. Gaitor: Learning a Unified Representation Across Gaits for Real-World Quadruped Locomotion. CoRL 2024.</li>
+  <li>G. Bellegarda, A. Ijspeert. CPG-RL: Learning Central Pattern Generators for Quadruped Locomotion. IEEE RA-L 2022.</li>
+  <li>J. Lee et al. Learning Quadrupedal Locomotion over Challenging Terrain. Science Robotics 2020.</li>
+  <li>A. Kumar et al. RMA: Rapid Motor Adaptation for Legged Robots. RSS 2021.</li>
+  <li>S. Chen et al. SLR: Learning Quadruped Locomotion without Privileged Information. CoRL 2024.</li>
+</ol>

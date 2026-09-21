@@ -1,0 +1,20 @@
+---
+import YouTube from './YouTube.astro';
+interface Props { title: string; note?: string; id?: string }
+const { title, note, id } = Astro.props;
+---
+{id ? (
+  <figure class="clip">
+    <YouTube id={id} title={title} />
+    <figcaption><strong>{title}</strong>{note && <> – {note}</>}</figcaption>
+  </figure>
+) : (
+  <figure class="clip">
+    <div class="clip-placeholder" role="img" aria-label={`Video placeholder: ${title}`}>
+      <span class="play" aria-hidden="true"></span>
+      <strong>{title}</strong>
+      <span class="state">Video in preparation</span>
+    </div>
+    {note && <figcaption>{note}</figcaption>}
+  </figure>
+)}

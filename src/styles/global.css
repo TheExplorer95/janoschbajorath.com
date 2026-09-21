@@ -93,3 +93,31 @@ main { padding: 2.5rem 0 4rem; }
 .hero { display: flex; gap: 2rem; align-items: flex-start; flex-wrap: wrap; }
 .hero .portrait { width: 160px; height: 160px; border-radius: 50%; object-fit: cover; background: var(--bg-soft); flex: none; }
 .hero .text { flex: 1 1 20rem; }
+
+/* Figures carry dark ink on a transparent ground, so they keep a white panel in both schemes. */
+.plot img { display: block; width: 100%; background: #fff; border: 1px solid var(--rule); border-radius: 4px; padding: 0.75rem; }
+.plot figcaption p, .clip figcaption p { margin: 0 0 0.5rem; }
+.plot figcaption strong, .clip figcaption strong { color: var(--ink); }
+
+.clip { max-width: 44rem; }
+.clip .video { margin: 0; }
+.clip-placeholder {
+  aspect-ratio: 16 / 9; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 0.5rem; padding: 1rem; text-align: center; background: var(--bg-soft);
+  border: 1px dashed var(--rule); border-radius: 4px;
+}
+.clip-placeholder .play {
+  width: 3rem; height: 3rem; border-radius: 50%; border: 2px solid var(--muted); position: relative; margin-bottom: 0.25rem;
+}
+.clip-placeholder .play::after {
+  content: ''; position: absolute; left: 54%; top: 50%; transform: translate(-50%, -50%);
+  border-style: solid; border-width: 0.55rem 0 0.55rem 0.9rem; border-color: transparent transparent transparent var(--muted);
+}
+.clip-placeholder .state { font-size: 0.85rem; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); }
+
+/* Gradient colours of the WHERE 2026 poster: PPO green, auxiliary objective purple. */
+.ppo { color: var(--accent-ink); font-weight: 600; }
+.aux { color: #7b3fa0; font-weight: 600; white-space: nowrap; }
+@media (prefers-color-scheme: dark) { .aux { color: #c08be0; } }
+
+.references { font-size: 0.9rem; color: var(--muted); padding-left: 1.5rem; }
