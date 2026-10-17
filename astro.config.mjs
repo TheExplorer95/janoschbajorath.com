@@ -13,5 +13,6 @@ export default defineConfig({
   },
   redirects: {
     '/where2026': '/research/where-2026',
+    '/sab2026': '/research/sab-2026',
   },
 });
