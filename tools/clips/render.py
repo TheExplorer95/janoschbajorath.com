@@ -1,41 +1,54 @@
-"""Render the WHERE 2026 clips.
+"""Render the clips of one conference page.
 
-    python tools/clips/render.py              # all
-    python tools/clips/render.py jump push    # some; other manifest entries are kept
+    python tools/clips/render.py                              # all WHERE 2026 clips
+    python tools/clips/render.py jump push                    # some; other entries are kept
+    python tools/clips/render.py --page sab-2026 gaits push   # the SAB 2026 page
 """
 
 from __future__ import annotations
 
 import argparse
+import importlib
 import json
 from pathlib import Path
 
 import compose
-from where_2026 import CLIPS, RUNS
 
 REPO = Path(__file__).resolve().parents[2]
-OUT_DIR = REPO / "public" / "videos" / "where-2026"
-MANIFEST = REPO / "src" / "data" / "where-2026-clips.json"
+PAGES = ("where-2026", "sab-2026")
+"""Each page's entries live in the module of the same name with `-` as `_`, exposing
+`CLIPS`, `RUNS`, `LEADING`, `ROOT` and `CHECKPOINT`."""
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("names", nargs="*", help=f"any of: {', '.join(CLIPS)}")
-    parser.add_argument("--root", type=Path,
-                        default=Path.home() / "code/gait_rl/experiment/WHERE_rev2")
+    parser = argparse.ArgumentParser(description=__doc__,
+                                     formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser.add_argument("names", nargs="*", help="clip entries of the page; all when none")
+    parser.add_argument("--page", choices=PAGES, default=PAGES[0])
+    parser.add_argument("--root", type=Path, default=None,
+                        help="runs root; the page module's ROOT when omitted")
     args = parser.parse_args()
-    unknown = [name for name in args.names if name not in CLIPS]
+    entries = importlib.import_module(args.page.replace("-", "_"))
+    clips = entries.CLIPS
+    unknown = [name for name in args.names if name not in clips]
     if unknown:
-        parser.error(f"unknown clip(s) {unknown}; known: {', '.join(CLIPS)}")
+        parser.error(f"unknown clip(s) {unknown}; known: {', '.join(clips)}")
+    root = args.root if args.root is not None else entries.ROOT
+    out_dir = REPO / "public" / "videos" / args.page
+    manifest_path = REPO / "src" / "data" / f"{args.page}-clips.json"
 
-    manifest = json.loads(MANIFEST.read_text()) if MANIFEST.is_file() else {}
-    for name in args.names or list(CLIPS):
+    for name in args.names or list(clips):
         print(f"rendering {name} …")
-        manifest[name] = compose.render_clip(CLIPS[name], RUNS, args.root, OUT_DIR)
-        print(f"  {manifest[name]['width']} x {manifest[name]['height']}, "
-              f"{manifest[name]['duration_s']} s, {manifest[name]['bytes']} bytes")
-        MANIFEST.parent.mkdir(parents=True, exist_ok=True)
-        MANIFEST.write_text(json.dumps(manifest, indent=2, ensure_ascii=False) + "\n")
+        entry = compose.render_clip(clips[name], entries.RUNS, root, out_dir, args.page,
+                                    entries.CHECKPOINT, entries.LEADING)
+        print(f"  {entry['width']} x {entry['height']}, {entry['duration_s']} s, "
+              f"{entry['bytes']} bytes")
+        # Read the manifest again at each write, so renders running side by side keep
+        # each other's entries.
+        manifest = json.loads(manifest_path.read_text()) if manifest_path.is_file() else {}
+        manifest[name] = entry
+        manifest_path.parent.mkdir(parents=True, exist_ok=True)
+        manifest_path.write_text(json.dumps(manifest, indent=2, ensure_ascii=False) + "\n")
 
 
 if __name__ == "__main__":

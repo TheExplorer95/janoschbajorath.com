@@ -1,10 +1,13 @@
 ---
 import YouTube from './YouTube.astro';
-import clips from '../data/where-2026-clips.json';
-interface Props { title: string; note?: string; id?: string; name?: string; wide?: boolean }
-const { title, note, id, name, wide = false } = Astro.props;
-const clip = name ? (clips as Record<string, any>)[name] : undefined;
-if (name && !clip) throw new Error(`Clip "${name}" is not in where-2026-clips.json; render it first.`);
+import whereClips from '../data/where-2026-clips.json';
+import sabClips from '../data/sab-2026-clips.json';
+// One manifest per conference page, each written by `tools/clips/render.py --page <page>`.
+const manifests: Record<string, Record<string, any>> = { 'where-2026': whereClips, 'sab-2026': sabClips };
+interface Props { title: string; note?: string; id?: string; name?: string; page?: 'where-2026' | 'sab-2026'; wide?: boolean }
+const { title, note, id, name, page = 'where-2026', wide = false } = Astro.props;
+const clip = name ? manifests[page][name] : undefined;
+if (name && !clip) throw new Error(`Clip "${name}" is not in ${page}-clips.json; render it first.`);
 const hasCaption = Astro.slots.has('default');
 ---
 {clip ? (

@@ -11,6 +11,10 @@ links:
   lab: "https://www.uni-muenster.de/AISystems/"
 ---
 
+<Clip page="sab-2026" name="intro" title="Locomotion Diversity">
+**Locomotion Diversity** – A field of 384 robots under nominal dynamics, each starting from a random orientation with its own command, drawn from the command range the <span class="cur">curriculum</span> run reached, standstills included. The field reaches past the frame; a robot that walks out of it re-enters at its origin with a new orientation.
+</Clip>
+
 ## Abstract
 
 Current quadruped locomotion control approaches are based on deep reinforcement learning and impose certain forms of behavioral structure through gait priors, reward shaping, or imitation. Bottom-up methods relax these priors, but typically retain an auxiliary objective that steers the latent representation $z_t$ toward a chosen geometry. Our work focuses on locomotion learning from a latent-centric perspective: what behavioral organization emerges inside a controller when no such structure is forced onto the system in a top-down fashion, and no bottom-up auxiliary objective guides $z_t$ either. We analyze how locomotor coordination forms within $z_t$ and explore whether the evolution of $z_t$ can itself guide training toward greater behavioral adaptivity.
@@ -45,6 +49,10 @@ Under <span class="ppo">PPO</span> the gait cycles form displaced, irregular poi
 
 The push appears as an excursion from the nominal cycle that grows with the push level and has no geometry of its own, under <span class="ppo">PPO</span>, <span class="aux">AUX</span> and the <span class="cur">curriculum</span> alike.
 
+<Clip page="sab-2026" name="gaits" title="The commanded behaviors">
+**The commanded behaviors** – Stand and the middle of the walk, trot and bound speed bands under nominal dynamics, with the <span class="cur">curriculum</span>, first at full speed, then at half speed. Beside each robot, the latent on the first two principal components of the run's basis: the live point with its trail, and the four conditions' recorded cycles as rings. Speed is the radius; the stand condition is the center.
+</Clip>
+
 <Figure src="/figures/sab-2026/latent-organisation.png" alt="Left: PCA of the latent per training condition, colored by commanded speed and gait. Right: the latent on the trot command under pushes of 0 to 105 N, colored by push level, on the three components the push raises most.">
 **Behavior and Domain Encoding** – Left: PCA of $z_t$ per training condition (% variance), each panel on its own scale, color the commanded speed and gait. Right: $z_t$ on the trot command under pushes of 0 to 105 N, on the three components the push raises most (% variance), each panel its own components and scale. The nominal cycle is the command's latent course without a push.
 </Figure>
@@ -70,6 +78,14 @@ The gain of the joint targets on each component changes by less than ten percent
 The partition is tested in closed loop. From the push onset on, the latent the locomotion controller reads is replaced by the command's nominal cycle plus a selected part of its deviation, and the share of episodes that never fall is recorded over push levels up to 200 N, on walk, trot and bound.
 
 The intact policies withstand pushes well beyond the trained range. With <span class="aux">AUX</span> and the <span class="cur">curriculum</span> the behavior mask survives nearly as the intact representation does: the nominal cycle replaces the behavior components without loss, and the correction is drawn from the domain components alone. Under <span class="ppo">PPO</span> the behavior mask falls from 60 N on, so the behavior components carry part of the correction. The domain mask and the full mask fall in nearly all episodes already without a push, under all three conditions. The feedback on the deviation cannot be replaced; the feedback on the gait cycle can.
+
+<Figure src="/figures/sab-2026/mask-mechanism.svg" alt="The mask mechanism: the latent z as sixteen components, the nominal cycle h of phi, their difference, and four panels showing which components of the difference each mask keeps and which it replaces by the nominal course.">
+**The Masks** – From the onset on, the locomotion controller reads $h(\varphi) + M\,(z_t - h(\varphi))$: the command's nominal cycle $h(\varphi)$ plus the part of the deviation that the mask $M$ keeps. No Mask keeps the deviation on all components, the Behavior Mask on the domain components only, the Domain Mask on the behavior components only and the Full Mask on none; a replaced component follows its nominal course. The behavior components are the leading $k$ of each basis, 5 under <span class="ppo">PPO</span>, 7 with <span class="aux">AUX</span> and 2 under the <span class="cur">curriculum</span>.
+</Figure>
+
+<Clip page="sab-2026" name="push" title="A lateral push under latent masking" wide>
+**A lateral push under latent masking** – At trot, seen from behind, <span class="ppo">PPO</span>, <span class="aux">AUX</span> and the <span class="cur">curriculum</span>, one row each. From the red tick on, the latent the controller reads is the command's nominal cycle plus the deviation on all components (No Mask), on the domain components only (Behavior Mask), on the behavior components only (Domain Mask) or on none (Full Mask). The red band is the 0.2 s push of 100 N, applied in the first two columns only. Under each robot, the deviation of the latent from its nominal cycle over time, split into the behavior components (in the condition's color) and the domain components (white), in units of the group's own cycle amplitude; a masked group's line is flat from the tick, the course it would have taken dotted.
+</Clip>
 
 <Figure src="/figures/sab-2026/mask-survival.svg" alt="Share of episodes surviving a push over push force, one panel per training condition, for the intact latent and the behavior, domain and full masks.">
 **Push Survival** – Share of episodes that never fall under a push, over walk, trot and bound, one panel per training condition. From the push onset on, the latent the locomotion controller reads is the command's nominal cycle plus the deviation on all components (No Mask), on the domain components only (Behavior Mask), on the behavior components only (Domain Mask) or on none (Full Mask). The behavior components are the leading ones of each basis, PC1–5 under <span class="ppo">PPO</span>, PC1–7 with <span class="aux">AUX</span> and PC1–2 under the <span class="cur">curriculum</span>. The shaded band is the push range of training.

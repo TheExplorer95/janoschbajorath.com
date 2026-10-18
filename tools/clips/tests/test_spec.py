@@ -1,3 +1,5 @@
+from dataclasses import replace
+
 import pytest
 
 from spec import Clip, ClipSpecError, Geometry, Segment, Tile, frames
@@ -63,3 +65,19 @@ def test_the_tile_count_must_fill_the_grid():
     with pytest.raises(ClipSpecError, match="4 tiles"):
         _clip((Segment(4.0, 7.0, False),), anchor="raw", event_column=None,
               geometry=grid, tiles=(TILE,))
+
+
+def test_a_side_panel_widens_every_cell():
+    g = Geometry(crop=(960, 540), tile=(640, 360), rows=2, cols=2, strip_h=96, side_w=456)
+    assert g.size == (2192, 912) and g.cell_h == 456
+
+
+def test_an_odd_side_panel_is_refused():
+    with pytest.raises(ClipSpecError, match="even"):
+        Geometry(crop=(960, 540), tile=(640, 360), rows=1, cols=1, side_w=455)
+
+
+def test_an_unknown_trace_value_is_refused():
+    clip = _clip((Segment(4.0, 7.0, False),), anchor="raw", event_column=None)
+    with pytest.raises(ClipSpecError, match="trace"):
+        replace(clip, trace="joints")

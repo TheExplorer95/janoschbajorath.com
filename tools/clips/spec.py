@@ -51,9 +51,12 @@ class Tile:
     subtitle: str
     """Second label line; `{f}` is replaced by the recording's stride frequency in Hz."""
     encoder: str | None
-    """`"ppo"` or `"aux"`: the encoder's name is drawn in its colour; None draws none."""
+    """`"ppo"`, `"aux"` or `"cur"`: the condition's name is drawn in its colour; None draws
+    none."""
     header: str | None
     """Column header above the tile; read from the first row only."""
+    mask: str | None = None
+    """Mask id of a push column, read by the latent trace; None for a column without one."""
 
 
 @dataclass(frozen=True)
@@ -67,10 +70,12 @@ class Geometry:
     trace_h: int = 0
     strip_h: int = 0
     timeline_h: int = 0
+    side_w: int = 0
+    """Width of a square side panel beside each tile; 0 draws none."""
 
     def __post_init__(self) -> None:
         sizes = (*self.crop, *self.tile, self.header_h, self.trace_h, self.strip_h,
-                 self.timeline_h)
+                 self.timeline_h, self.side_w)
         if any(value % 2 for value in sizes):
             raise ClipSpecError(f"Every size must be even for yuv420p; got {sizes}.")
         if self.crop[0] > RAW_SIZE[0] or self.crop[1] > RAW_SIZE[1]:
@@ -82,7 +87,7 @@ class Geometry:
 
     @property
     def size(self) -> tuple[int, int]:
-        return (self.cols * self.tile[0],
+        return (self.cols * (self.tile[0] + self.side_w),
                 self.header_h + self.rows * self.cell_h + self.timeline_h)
 
 
@@ -99,10 +104,16 @@ class Clip:
     push_band: bool
     still_s: float
     env_idx: int = 0
+    max_bytes: int = MAX_BYTES
+    """The size the encoder must reach; the page rule unless an entry allows more."""
+    trace: str = "targets"
+    """`"targets"`: the joint-target trace. `"latent"`: the latent deviation trace."""
 
     def __post_init__(self) -> None:
         if self.anchor not in ("event", "raw"):
             raise ClipSpecError(f"Clip '{self.name}': anchor must be 'event' or 'raw'.")
+        if self.trace not in ("targets", "latent"):
+            raise ClipSpecError(f"Clip '{self.name}': trace must be 'targets' or 'latent'.")
         if self.anchor == "event" and self.event_column is None:
             raise ClipSpecError(f"Clip '{self.name}': an event cut needs an event_column.")
         wanted = self.geometry.rows * self.geometry.cols
@@ -132,4 +143,5 @@ class Clip:
     @property
     def needs_recording(self) -> bool:
         geometry = self.geometry
-        return bool(self.anchor == "event" or geometry.strip_h or geometry.trace_h)
+        return bool(self.anchor == "event" or geometry.strip_h or geometry.trace_h
+                    or geometry.side_w)

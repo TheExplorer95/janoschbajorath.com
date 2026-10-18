@@ -1,0 +1,137 @@
+{
+  "gaits": {
+    "src": "/videos/sab-2026/gaits.mp4",
+    "poster": "/videos/sab-2026/gaits.jpg",
+    "width": 2192,
+    "height": 912,
+    "duration_s": 9.0,
+    "bytes": 2550769,
+    "crf": 23,
+    "tiles": [
+      {
+        "run": "proprio-encoder_contacts_curriculum/26-10-12_21-26-43_proprio-encoder_contacts_curriculum",
+        "task": "video_stand",
+        "recording": "proprio-encoder_contacts_curriculum/26-10-12_21-26-43_proprio-encoder_contacts_curriculum/evaluations/video_stand/7250/evaluation_data_261018_154749.parquet",
+        "event_frame": null
+      },
+      {
+        "run": "proprio-encoder_contacts_curriculum/26-10-12_21-26-43_proprio-encoder_contacts_curriculum",
+        "task": "video_walk",
+        "recording": "proprio-encoder_contacts_curriculum/26-10-12_21-26-43_proprio-encoder_contacts_curriculum/evaluations/video_walk/7250/evaluation_data_261018_155204.parquet",
+        "event_frame": null
+      },
+      {
+        "run": "proprio-encoder_contacts_curriculum/26-10-12_21-26-43_proprio-encoder_contacts_curriculum",
+        "task": "video_trot",
+        "recording": "proprio-encoder_contacts_curriculum/26-10-12_21-26-43_proprio-encoder_contacts_curriculum/evaluations/video_trot/7250/evaluation_data_261018_155621.parquet",
+        "event_frame": null
+      },
+      {
+        "run": "proprio-encoder_contacts_curriculum/26-10-12_21-26-43_proprio-encoder_contacts_curriculum",
+        "task": "video_bound",
+        "recording": "proprio-encoder_contacts_curriculum/26-10-12_21-26-43_proprio-encoder_contacts_curriculum/evaluations/video_bound/7250/evaluation_data_261018_160059.parquet",
+        "event_frame": null
+      }
+    ]
+  },
+  "intro": {
+    "src": "/videos/sab-2026/intro.mp4",
+    "poster": "/videos/sab-2026/intro.jpg",
+    "width": 1920,
+    "height": 1080,
+    "duration_s": 11.92,
+    "bytes": 5355113,
+    "crf": 32,
+    "tiles": [
+      {
+        "run": "proprio-encoder_contacts_curriculum/26-10-12_21-26-43_proprio-encoder_contacts_curriculum",
+        "task": "video_intro",
+        "recording": null,
+        "event_frame": null
+      }
+    ]
+  },
+  "push": {
+    "src": "/videos/sab-2026/push.mp4",
+    "poster": "/videos/sab-2026/push.jpg",
+    "width": 1920,
+    "height": 1832,
+    "duration_s": 5.8,
+    "bytes": 3277840,
+    "crf": 23,
+    "tiles": [
+      {
+        "run": "rl-only/26-10-12_16-04-32_rl-only",
+        "task": "video_mask_identity_m100",
+        "recording": "rl-only/26-10-12_16-04-32_rl-only/evaluations/video_mask_identity_m100/7250/evaluation_data_261018_160505.parquet",
+        "event_frame": 130
+      },
+      {
+        "run": "rl-only/26-10-12_16-04-32_rl-only",
+        "task": "video_mask_trailing_m100",
+        "recording": "rl-only/26-10-12_16-04-32_rl-only/evaluations/video_mask_trailing_m100/7250/evaluation_data_261018_160627.parquet",
+        "event_frame": 130
+      },
+      {
+        "run": "rl-only/26-10-12_16-04-32_rl-only",
+        "task": "video_mask_leading_m0",
+        "recording": "rl-only/26-10-12_16-04-32_rl-only/evaluations/video_mask_leading_m0/7250/evaluation_data_261018_160746.parquet",
+        "event_frame": 130
+      },
+      {
+        "run": "rl-only/26-10-12_16-04-32_rl-only",
+        "task": "video_mask_blind_m0",
+        "recording": "rl-only/26-10-12_16-04-32_rl-only/evaluations/video_mask_blind_m0/7250/evaluation_data_261018_160915.parquet",
+        "event_frame": 130
+      },
+      {
+        "run": "proprio-encoder_contacts/26-10-15_09-29-51_proprio-encoder_contacts",
+        "task": "video_mask_identity_m100",
+        "recording": "proprio-encoder_contacts/26-10-15_09-29-51_proprio-encoder_contacts/evaluations/video_mask_identity_m100/7250/evaluation_data_261018_161044.parquet",
+        "event_frame": 130
+      },
+      {
+        "run": "proprio-encoder_contacts/26-10-15_09-29-51_proprio-encoder_contacts",
+        "task": "video_mask_trailing_m100",
+        "recording": "proprio-encoder_contacts/26-10-15_09-29-51_proprio-encoder_contacts/evaluations/video_mask_trailing_m100/7250/evaluation_data_261018_161203.parquet",
+        "event_frame": 130
+      },
+      {
+        "run": "proprio-encoder_contacts/26-10-15_09-29-51_proprio-encoder_contacts",
+        "task": "video_mask_leading_m0",
+        "recording": "proprio-encoder_contacts/26-10-15_09-29-51_proprio-encoder_contacts/evaluations/video_mask_leading_m0/7250/evaluation_data_261018_161322.parquet",
+        "event_frame": 130
+      },
+      {
+        "run": "proprio-encoder_contacts/26-10-15_09-29-51_proprio-encoder_contacts",
+        "task": "video_mask_blind_m0",
+        "recording": "proprio-encoder_contacts/26-10-15_09-29-51_proprio-encoder_contacts/evaluations/video_mask_blind_m0/7250/evaluation_data_261018_161443.parquet",
+        "event_frame": 130
+      },
+      {
+        "run": "proprio-encoder_contacts_curriculum/26-10-12_21-26-43_proprio-encoder_contacts_curriculum",
+        "task": "video_mask_identity_m100",
+        "recording": "proprio-encoder_contacts_curriculum/26-10-12_21-26-43_proprio-encoder_contacts_curriculum/evaluations/video_mask_identity_m100/7250/evaluation_data_261018_161617.parquet",
+        "event_frame": 130
+      },
+      {
+        "run": "proprio-encoder_contacts_curriculum/26-10-12_21-26-43_proprio-encoder_contacts_curriculum",
+        "task": "video_mask_trailing_m100",
+        "recording": "proprio-encoder_contacts_curriculum/26-10-12_21-26-43_proprio-encoder_contacts_curriculum/evaluations/video_mask_trailing_m100/7250/evaluation_data_261018_161737.parquet",
+        "event_frame": 130
+      },
+      {
+        "run": "proprio-encoder_contacts_curriculum/26-10-12_21-26-43_proprio-encoder_contacts_curriculum",
+        "task": "video_mask_leading_m0",
+        "recording": "proprio-encoder_contacts_curriculum/26-10-12_21-26-43_proprio-encoder_contacts_curriculum/evaluations/video_mask_leading_m0/7250/evaluation_data_261018_161856.parquet",
+        "event_frame": 130
+      },
+      {
+        "run": "proprio-encoder_contacts_curriculum/26-10-12_21-26-43_proprio-encoder_contacts_curriculum",
+        "task": "video_mask_blind_m0",
+        "recording": "proprio-encoder_contacts_curriculum/26-10-12_21-26-43_proprio-encoder_contacts_curriculum/evaluations/video_mask_blind_m0/7250/evaluation_data_261018_162012.parquet",
+        "event_frame": 130
+      }
+    ]
+  }
+}

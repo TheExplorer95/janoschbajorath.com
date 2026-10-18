@@ -1,11 +1,17 @@
 """The five clips of the WHERE 2026 page. Wording and timing are edited here only."""
 
+from pathlib import Path
+
 from spec import Clip, Geometry, Segment, Tile
 
+ROOT = Path.home() / "code/gait_rl/experiment/WHERE_rev2"
+CHECKPOINT = None
 RUNS = {
     "aux": "dynamics-contacts/26-09-15_01-18-50_dynamics-contacts",
     "ppo": "rl-only/26-09-15_12-58-26_rl-only",
 }
+LEADING = {"aux": 8, "ppo": 8}
+"""Behaviour (leading) components per run: the push columns read components 1-8."""
 
 FULL = Geometry(crop=(1920, 1080), tile=(1920, 1080), rows=1, cols=1)
 

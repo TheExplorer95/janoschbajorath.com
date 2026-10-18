@@ -60,3 +60,62 @@ def test_the_trace_stays_inside_its_box_and_survives_nan():
     values[200:210] = 9.0
     draw.trace(image, (0, 0, 960, 120), values, rows=(126, 326), playhead_row=200, event_row=176)
     assert _changed(image, (0, 0, 960, 120))
+
+
+def test_the_condition_names_are_the_posters():
+    assert [draw.CONDITIONS[k][0] for k in ("ppo", "aux", "cur")] == ["PPO", "+ AUX", "+ Curriculum"]
+    assert draw.CONDITIONS["cur"][1] == (95, 196, 200)
+
+
+def test_the_latent_panel_draws_the_point_where_the_limits_put_it():
+    image = _canvas((456, 456))
+    draw.latent_panel(image, (0, 0, 456, 456), rings={}, trail=np.zeros((0, 2)), point=np.array([1.0, 0.0]),
+                      limits=(-1, 1, -1, 1), colour=(255, 0, 0), axis_labels=("PC1 (54 %)", "PC2 (45 %)"))
+    pixels = np.asarray(image)
+    red = (pixels[..., 0] > 200) & (pixels[..., 1] < 80)
+    assert red[200:256, 400:456].any() and not red[0:60, 0:60].any()  # right-middle, not top-left
+
+
+def _trace_lines(rows=100, event=50):
+    index = np.arange(rows)
+    return {"behaviour": np.where(index < event, 1.0, 0.0), "domain": np.ones(rows),
+            "behaviour_raw": np.ones(rows), "domain_raw": np.ones(rows)}
+
+
+def _trace(image, lines, y_label="latent deviation"):
+    draw.deviation_trace(image, (0, 0, 480, 160), lines, (0, 100), 70, 50, ceiling=2.0,
+                         colour=(255, 0, 0), seconds_per_row=0.02, y_label=y_label)
+
+
+def test_the_deviation_trace_flattens_the_masked_line_from_the_event():
+    image = _canvas((480, 160))
+    _trace(image, _trace_lines())
+    red = (np.asarray(image)[..., 0] > 200) & (np.asarray(image)[..., 1] < 80)
+    assert red[30:118, 40:230].any()
+    assert red[30:100, 300:470].sum() < red[30:100, 40:230].sum()  # the red line sits lower after the event
+
+
+def test_the_trace_has_axes_tick_labels_and_a_legend_row():
+    image = _canvas((480, 160))
+    _trace(image, _trace_lines())
+    bright = np.asarray(image).max(axis=-1) > 150
+    assert bright[0:24, 58:400].any()        # legend row above the plot
+    assert bright[120:138, 58:470].any()     # second tick labels under the axis
+    assert bright[140:160, 150:330].any()    # the axis title "time (s)"
+    assert not bright[30:114, 24:29].any()   # no y tick labels: the gutter is empty up to the axis
+
+
+def test_only_the_first_column_carries_the_y_axis_title():
+    labelled, bare = _canvas((480, 160)), _canvas((480, 160))
+    _trace(labelled, _trace_lines())
+    _trace(bare, _trace_lines(), y_label=None)
+    title = slice(30, 118), slice(0, 24)
+    assert (np.asarray(labelled)[title].max(axis=-1) > 150).any()
+    assert not (np.asarray(bare)[title].max(axis=-1) > 150).any()
+    assert np.array_equal(np.asarray(labelled)[:, 30:], np.asarray(bare)[:, 30:])
+
+
+def test_a_nan_window_does_not_break_the_trace():
+    image = _canvas((480, 160))
+    nan = np.full(100, np.nan)
+    _trace(image, {"behaviour": nan, "domain": nan, "behaviour_raw": nan, "domain_raw": nan})
