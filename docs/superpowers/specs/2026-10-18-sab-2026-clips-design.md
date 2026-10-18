@@ -311,7 +311,7 @@ raw frame, 0.5× every frame, label plate top-left, Fira Sans, even sizes, CRF 2
 | Name | Tiles | Cut and pacing | Devices |
 |---|---|---|---|
 | `gaits` | 2 × 2: stand, walk, trot, bound; `cur` | raw 4–7 s at 1×, then the same at 0.5× | label `Stand · 0 m/s commanded` etc., no subtitle; footfall strip under the robot; latent panel beside it |
-| `push` | 3 rows (`ppo`, `aux`, `cur`) × 4 columns (D4) | ev −0.6 … +4.0 s; 0.5× from ev to ev +1.2 s | column headers; condition name on each row's first tile; deviation trace under every tile; timeline with push band and tick `substitution on` |
+| `push` | 3 rows (`ppo`, `aux`, `cur`) × 4 columns (D4), at the content width, not broken out (Janosch, 2026-10-18) | ev −0.6 … +4.0 s; 0.5× from ev to ev +1.2 s | column headers; condition name on each row's first tile; deviation trace under every tile; timeline with push band and tick `substitution on` |
 | `intro` | 1, full frame; `cur` | raw 0.06 s to the end of the clip at 1× | title `Locomotion Diversity`, no subtitle, condition name |
 
 `push` column headers: `No Mask · 100 N`, `Behavior Mask · 100 N`, `Domain Mask · 0 N`,

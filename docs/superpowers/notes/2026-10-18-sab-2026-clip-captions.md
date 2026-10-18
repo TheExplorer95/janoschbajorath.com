@@ -14,7 +14,7 @@ Register as the WHERE page: bold title, en dash, one claim per sentence, conditi
 ## push
 
 ```mdx
-<Clip page="sab-2026" name="push" title="A lateral push under latent masking" wide>
+<Clip page="sab-2026" name="push" title="A lateral push under latent masking">
 **A lateral push under latent masking** – At trot, seen from behind, <span class="ppo">PPO</span>, <span class="aux">AUX</span> and the <span class="cur">curriculum</span>, one row each. From the red tick on, the latent the controller reads is the command's nominal cycle plus the deviation on all components (No Mask), on the domain components only (Behavior Mask), on the behavior components only (Domain Mask) or on none (Full Mask). The red band is the 0.2 s push of 100 N, applied in the first two columns only. Under each robot, the deviation of the latent from its nominal cycle over time, split into the behavior components (in the condition's color) and the domain components (white), in units of the group's own cycle amplitude; a masked group's line is flat from the tick, the course it would have taken dotted.
 </Clip>
 ```
