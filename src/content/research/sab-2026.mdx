@@ -1,0 +1,92 @@
+---
+title: "Latent Representations Encoding Behavior and Modulating Adaptivity in Locomotion Learning"
+subtitle: "Behavior and domain occupy separable components of a locomotion controller's latent representation. Auxiliary gradients produce the partition, PPO alone does not, and a curriculum over command and domain concentrates the behavior on two components."
+summary: "Poster at SAB 2026, the International Conference on the Simulation of Adaptive Behavior (Springer LNCS)."
+authors: ["Janosch Bajorath", "Malte Schilling"]
+kind: poster
+venue: "SAB 2026"
+date: 2026-10-19
+links:
+  poster: "/files/sab-2026-poster.pdf"
+  lab: "https://www.uni-muenster.de/AISystems/"
+---
+
+## Abstract
+
+Current quadruped locomotion control approaches are based on deep reinforcement learning and impose certain forms of behavioral structure through gait priors, reward shaping, or imitation. Bottom-up methods relax these priors, but typically retain an auxiliary objective that steers the latent representation $z_t$ toward a chosen geometry. Our work focuses on locomotion learning from a latent-centric perspective: what behavioral organization emerges inside a controller when no such structure is forced onto the system in a top-down fashion, and no bottom-up auxiliary objective guides $z_t$ either. We analyze how locomotor coordination forms within $z_t$ and explore whether the evolution of $z_t$ can itself guide training toward greater behavioral adaptivity.
+
+## Problem
+
+Learned quadruped locomotion is structured from the top down, through gait rewards [1], reference motions [2] and pattern generators [3], or from the bottom up, through an auxiliary objective that shapes the latent representation [4, 5]. In either case the policy compresses the proprioceptive history into a latent $z_t$, from which the locomotion controller infers the robot's state and its deviation under domain changes. Adaptive locomotion results from these two readings. What $z_t$ organizes is not specified by either design. Whether behavior and domain occupy separable parts of $z_t$, how the locomotion controller reads these parts, and whether a curriculum over the command and domain distributions alters this organization remain open.
+
+## Contributions
+
+Three contributions address these points, for a policy trained with <span class="ppo">PPO</span> alone, with the <span class="aux">AUX</span> gradients added, and with a <span class="cur">curriculum</span> conditioned on command and domain.
+
+- **[Latent Organization](#1-latent-organization).** A geometric characterization of $z_t$ in its encoding of behavior and domain.
+- **[Partition under Domain Perturbation](#2-partition-under-domain-perturbation).** A component-wise partition of $z_t$ into behavior and domain adaptation.
+- **[Adaptivity under Masking](#3-adaptivity-under-masking).** A masking of $z_t$ that tests the partition in closed loop.
+
+## RL Training Setup
+
+<Figure src="/figures/sab-2026/training-setup.svg" alt="Goal-conditioned RL loop: the agent-environment loop extended by the command and the foot phases, with the command split into motion, gait, posture and actuation, and a clock that maps the commanded gait to foot phases.">
+**Goal-Conditioned RL** – The agent–environment loop is extended by the command $\text{cmd}_t$ and the foot phases $\varphi^{\text{foot}}_t$ that enter the policy and the reward function. MOTION sets the base twist $\mathcal{V}^{\text{base}} = (v_x, v_y, \omega_z)$. GAIT follows from the commanded speed: stand at rest, walk below 0.7 m/s, trot up to 1.7 m/s and bound above. Stepping frequency $f$ is 0 in stance, then rises from 1.5 to 3.4 Hz, and duty $d$ is 1, 0.75, 0.50 and 0.35 respectively; gait-specific offsets $\theta^{\text{foot}}$ set the footfall pattern. POSTURE constrains the base pose $T^{\text{base}} \in SE(3)$ through its height $p_z$ and attitude $g^{\text{base}} = R^{\top}\hat{g}$, the gravity direction in the body frame. ACTUATION sets the PD gains $k_p, k_d$ of each joint. The CLOCK of the environment maps the commanded gait to the prescribed foot phases $\varphi^{\text{foot}}_t$. The reward functions track the twist and pose and score the contact schedule given by $\varphi^{\text{foot}}_t$.
+</Figure>
+
+<Figure src="/figures/sab-2026/gradient-flow.svg" alt="Gradient flow: PPO reaches the locomotion controller and the proprioception encoder; the auxiliary reconstruction and contact gradients reach only the encoder through the dynamics and contact decoders.">
+**Latent-Shaping Gradients** – Squiggles trace the gradients that shape the latent representation. <span class="ppo">PPO</span> reaches the locomotion controller and the encoder, while the auxiliary gradients <span class="aux">AUX</span> (<span class="aux">RECON</span> and <span class="aux">BCE</span>) reach only the encoder, through the DYNAMICS and CONTACT decoders. The proprioception encoder compresses the noisy history $s^{p}_{[t-30:t]}$ into $z_t \in \mathbb{R}^{16}$, and the locomotion controller maps $z_t$ and $\text{cmd}_t$ to the joint targets $a_t$. AUX adds a KL regularizer on $z_t$, a dynamics decoder that predicts the future proprioception $s^{p}$ and base velocity $v^{\text{base}} = (v_x, v_y, v_z)$, and a contact decoder that predicts the future foot contacts $c^{\text{foot}}$.
+</Figure>
+
+## 1 Latent Organization
+
+The latent is recorded on steady-state locomotion under stand, walk, trot and bound at several commanded speeds, and on the trot command under lateral pushes of 0 to 105 N. A PCA per training condition gives the geometry of the behavior encoding; the push recordings give the geometry of the domain encoding on the components the push raises most.
+
+Under <span class="ppo">PPO</span> the gait cycles form displaced, irregular point clouds that overlap across gaits and speeds, and no geometry is common to the commanded behaviors. The added <span class="aux">AUX</span> gradients organize the cycles into thin concentric rings centered on the stand command. The radius grows with the commanded speed, walk and trot share one plane, and bound is set apart from it. The <span class="cur">curriculum</span> extends this organization to all gaits: walk, trot and bound form concentric rings in a single plane, ordered by commanded speed.
+
+The push appears as an excursion from the nominal cycle that grows with the push level and has no geometry of its own, under <span class="ppo">PPO</span>, <span class="aux">AUX</span> and the <span class="cur">curriculum</span> alike.
+
+<Figure src="/figures/sab-2026/latent-organisation.png" alt="Left: PCA of the latent per training condition, colored by commanded speed and gait. Right: the latent on the trot command under pushes of 0 to 105 N, colored by push level, on the three components the push raises most.">
+**Behavior and Domain Encoding** – Left: PCA of $z_t$ per training condition (% variance), each panel on its own scale, color the commanded speed and gait. Right: $z_t$ on the trot command under pushes of 0 to 105 N, on the three components the push raises most (% variance), each panel its own components and scale. The nominal cycle is the command's latent course without a push.
+</Figure>
+
+## 2 Partition under Domain Perturbation
+
+Two measures locate behavior and domain within the components of $z_t$, on the push probe at walk, trot and bound. The first compares, per component, the displacement under a push with the nominal amplitude; the second compares, per component, the share of the latent's drive of the joint targets under the push with its share under nominal locomotion.
+
+Under <span class="ppo">PPO</span> every component lies at or about parity between domain and behavior: the behavior spreads over the leading components, the push over all alike, and both share every component. With <span class="aux">AUX</span> the leading components fall at or below parity and carry the behavior, each gait in its own measure, while the push falls on the trailing components, which vary little under nominal locomotion. The <span class="cur">curriculum</span> concentrates the behavior on two components, which hold the cycle of every gait alike, and allocates the push to the remaining ones. The shares change little with the push level.
+
+<Figure src="/figures/sab-2026/partition.svg" alt="Per principal component and training condition: the ratio of push displacement to nominal amplitude, the share of the nominal amplitude per gait, and the share of the push displacement per push level.">
+**Latent Partition** – *Domain / Behavior* is the displacement of $z_t$ from the nominal cycle under a 105 N push over the component's nominal amplitude, per episode on walk, trot and bound. *Behavior Share* is the component's part of the nominal amplitude over the 16 components, per gait, and *Domain Share* its part of the push displacement, per push level.
+</Figure>
+
+The gain of the joint targets on each component changes by less than ten percent under the push, so the shift of the drive follows from the amplitudes. Under <span class="ppo">PPO</span> the locomotion controller reads every component at a comparable gain, and the drive stays spread over all of them. With <span class="aux">AUX</span> the gain is low on the behavior components and high on the domain components. The push leaves the amplitude of the behavior components unchanged and raises that of the domain components, which are read at high gain, so the drive moves from the behavior components to the domain components. The <span class="cur">curriculum</span> reads its two behavior components at low gain and most of the remaining ones at high gain, and shows the same shift of the drive.
+
+<Figure src="/figures/sab-2026/drive.svg" alt="Per principal component and training condition: the sensitivity share of the joint targets before and under the push, and the ratio of the component's drive share under the push to its share under nominal locomotion.">
+**Drive under Perturbation** – *Sensitivity Share* is the gain of the joint targets on each component before the push, as a share over the 16 components, mean and range over the gaits; the dots give the gain under a 105 N push over the nominal one. The drive of a component is the change of the joint targets when the component is held at its nominal cycle. *Domain / Nominal Drive* is the component's share of the drive over the push and the recovery against its share before the push, per episode at 60 to 105 N.
+</Figure>
+
+## 3 Adaptivity under Masking
+
+The partition is tested in closed loop. From the push onset on, the latent the locomotion controller reads is replaced by the command's nominal cycle plus a selected part of its deviation, and the share of episodes that never fall is recorded over push levels up to 200 N, on walk, trot and bound.
+
+The intact policies withstand pushes well beyond the trained range. With <span class="aux">AUX</span> and the <span class="cur">curriculum</span> the behavior mask survives nearly as the intact representation does: the nominal cycle replaces the behavior components without loss, and the correction is drawn from the domain components alone. Under <span class="ppo">PPO</span> the behavior mask falls from 60 N on, so the behavior components carry part of the correction. The domain mask and the full mask fall in nearly all episodes already without a push, under all three conditions. The feedback on the deviation cannot be replaced; the feedback on the gait cycle can.
+
+<Figure src="/figures/sab-2026/mask-survival.svg" alt="Share of episodes surviving a push over push force, one panel per training condition, for the intact latent and the behavior, domain and full masks.">
+**Push Survival** – Share of episodes that never fall under a push, over walk, trot and bound, one panel per training condition. From the push onset on, the latent the locomotion controller reads is the command's nominal cycle plus the deviation on all components (No Mask), on the domain components only (Behavior Mask), on the behavior components only (Domain Mask) or on none (Full Mask). The behavior components are the leading ones of each basis, PC1–5 under <span class="ppo">PPO</span>, PC1–7 with <span class="aux">AUX</span> and PC1–2 under the <span class="cur">curriculum</span>. The shaded band is the push range of training.
+</Figure>
+
+## Conclusion and Outlook
+
+**Conclusion.** The locomotion controller computes the joint targets from a feedforward reference, the command and the prescribed foot phase, and from the feedback in $z_t$. Within $z_t$ two groups of components serve this feedback. Behavior components carry the commanded locomotion as closed cycles ordered by gait and speed, persist under a push and are read at low gain. Domain components vary little under nominal locomotion, respond to a push with an excursion that encodes the deviation and are read at high gain. Neither the amplitude of a component nor the gain on it identifies its role. The drive, the amplitude read at its gain, does. The masking confirms the partition. The behavior components can be replaced by their nominal cycle, the domain components cannot. The <span class="aux">AUX</span> gradients produce this partition, <span class="ppo">PPO</span> alone distributes behavior and domain over the same components, and the <span class="cur">curriculum</span> concentrates the behavior on two components. The AUX gradients and the curriculum over the command and domain distributions yield a latent representation partitioned into behavior and domain.
+
+**Outlook.** The proprioception encoder is split into one for behavior and one for domain. The clock is then replaced by a phase the policy derives itself, from a periodic encoder, a pattern generator or interoception. Finally the gait rewards are removed, so that the gait follows from optimization, steered by a curriculum the latent representation drives.
+
+## References
+
+<ol class="references">
+  <li>G. B. Margolis, P. Agrawal. Walk These Ways: Tuning Robot Control for Generalization with Multiplicity of Behavior. CoRL 2022.</li>
+  <li>A. L. Mitchell et al. VAE-Loco: Versatile Quadruped Locomotion by Learning a Disentangled Gait Representation. IEEE T-RO 2023.</li>
+  <li>G. Bellegarda, A. Ijspeert. CPG-RL: Learning Central Pattern Generators for Quadruped Locomotion. IEEE RA-L 2022.</li>
+  <li>S. Chen et al. SLR: Learning Quadruped Locomotion without Privileged Information. CoRL 2024.</li>
+  <li>A. Kumar et al. RMA: Rapid Motor Adaptation for Legged Robots. RSS 2021.</li>
+</ol>

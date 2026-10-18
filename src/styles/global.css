@@ -135,5 +135,7 @@ details.more summary { cursor: pointer; color: var(--muted); }
 .ppo { color: var(--accent-ink); font-weight: 600; }
 .aux { color: #7b3fa0; font-weight: 600; white-space: nowrap; }
 @media (prefers-color-scheme: dark) { .aux { color: #c08be0; } }
+.cur { color: #0f7c80; font-weight: 600; }
+@media (prefers-color-scheme: dark) { .cur { color: #4fb8bc; } }
 
 .references { font-size: 0.9rem; color: var(--muted); padding-left: 1.5rem; }
